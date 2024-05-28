@@ -1744,9 +1744,13 @@
                         "Accept": '*/*',
                         'Content-Type': 'application/json',
                         "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers":"X-Requested-With"
+                        "Access-Control-Allow-Headers":"X-Requested-With",
+                        "Authorization": "f935e008-0d27-11ef-a03c-6045bdaaffcb"
                     },
-                    body: JSON.stringify({})
+                    body: JSON.stringify({
+                        fromnumber: "53106",
+                        destnumber: "53227"
+                    })
                 })
 
                 response = await response.text();
