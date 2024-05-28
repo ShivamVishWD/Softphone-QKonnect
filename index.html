@@ -1737,36 +1737,31 @@
 
         async function callTransfer(){
             try{
-                let transferTo = document.querySelector("#agents-for-transfer").value;
-                console.log('transferTo : ',transferTo);
-
-                const data = new URLSearchParams();
-                data.append("fromnumber", "53106");
-                data.append("destnumber", "53227");
-
                 const myHeaders = new Headers();
-                myHeaders.append("Accept",'*/*');
-                myHeaders.append('Content-Type','application/json');
-                myHeaders.append("Access-Control-Allow-Origin","*");
-                myHeaders.append("Access-Control-Allow-Headers","X-Requested-With");
                 myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
                 myHeaders.append("Authorization", "f935e008-0d27-11ef-a03c-6045bdaaffcb");
 
-                const requestOption = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: data
-                }
+                const urlencoded = new URLSearchParams();
+                urlencoded.append("fromnumber", "53106");
+                urlencoded.append("destnumber", "53227");
 
-                let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", requestOption);
-                console.log("transfer request : ",response);
-                response = await response.text();
-                console.log("transfer request text : ",response);
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: urlencoded,
+                redirect: "follow"
+                };
+
+                fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
                 
             }catch(error){
                 console.log("catch error : ",error)
             }
         }
+        callTransfer();
     </script>
     
 </body> 
