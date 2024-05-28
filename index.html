@@ -373,6 +373,7 @@
                     "crm_status": crmStatus,
                     "crm_status_reason": status != "Online" ? status : ""
                 }
+                // let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus.php", {
                 let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
                     method: "POST",
                     Headers: {
