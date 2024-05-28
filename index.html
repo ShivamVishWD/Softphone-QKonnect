@@ -373,8 +373,7 @@
                     "crm_status": crmStatus,
                     "crm_status_reason": status != "Online" ? status : ""
                 }
-                // let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus.php", {
-                let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
+                let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus.php", {
                     method: "POST",
                     Headers: {
                         "Accept": '*/*',
@@ -1738,30 +1737,26 @@
 
         async function callTransfer(){
             try{
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-                myHeaders.append("Authorization", "f935e008-0d27-11ef-a03c-6045bdaaffcb");
+                
+                let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
+                    method: "POST",
+                    Headers: {
+                        "Accept": '*/*',
+                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers":"X-Requested-With"
+                    },
+                    body: JSON.stringify({})
+                })
 
-                const urlencoded = new URLSearchParams();
-                urlencoded.append("fromnumber", "53106");
-                urlencoded.append("destnumber", "53227");
-
-                const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: urlencoded,
-                redirect: "follow"
-                };
-
-                fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
-                .catch((error) => console.error(error));
+                response = await response.text();
+                console.log("response call transfer api : ",response);
                 
             }catch(error){
                 console.log("catch error : ",error)
             }
         }
+        callTransfer();
     </script>
     
 </body> 
