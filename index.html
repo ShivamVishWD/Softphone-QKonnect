@@ -617,6 +617,7 @@
         };
     
         window.onload = function () {
+            console.log('oConfigCall value : ',oConfigCall);
             window.console && window.console.info && window.console.info("location=" + window.location);
     
             videoLocal = document.getElementById("video_local");
@@ -698,6 +699,7 @@
         };
     
         function postInit() {
+            console.log('post init function ')
             // check for WebRTC support
             if (!SIPml.isWebRtcSupported()) {
                 // is it chrome?
@@ -757,6 +759,8 @@
                                 { name: 'language', value: '\"en,fr\"' }
                 ]
             };
+
+            console.log('oConfigCall initialize : ',oConfigCall);
         }
     
     
