@@ -1737,50 +1737,27 @@
 
         async function callTransfer(){
             try{
-                // const transferAgentElem = document.getElementById("#agents-for-transfe");
-                //const toExtension = transferAgentElem.value;
-                
+                const transferAgentElem = document.getElementById("agents-for-transfe");
+                const toExtension = transferAgentElem.value;
+                const data = {
+                    api_key: userAPIKey,
+                    fromnumber: userExtension,
+                    destnumber: toExtension,
+                };
+                console.log("data : ",data);
                 let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
                     method: "POST",
                     headers: {
                         "Accept": '*/*',
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers":"X-Requested-With",
                         'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers":"X-Requested-With"
                     },
-                    body: JSON.stringify({
-                        api_key: "f935e008-0d27-11ef-a03c-6045bdaaffcb",
-                        fromnumber: "53106",
-                        destnumber: "53227",
-                    })
+                    body: JSON.stringify(data)
                 })
                 console.log('response call transfer before : ',response);
                 response = await response.text();
                 console.log("response call transfer api : ",response);
-                /*
-                let data = {
-                    "api_key": "f935e008-0d27-11ef-a03c-6045bdaaffcb",
-                    "extension": "53106",
-                    "caller": "8840958397",
-                    "callBackDate": "2024-05-30",
-                    "callBackTime": "14:10:00"
-                }
-
-
-                    console.log(data, 'data for callback')
-                    let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceReminder.php", {
-                        method: "POST",
-                        Headers: {
-                            'Content-Type': 'application/json',
-                            "Access-Control-Allow-Origin": "*",
-                            "Access-Control-Allow-Headers":"X-Requested-With"
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    console.log(response, 'callback raw response')
-                    response = await response.json();
-                    console.log("callback json response : ",response);
-                    */
             }catch(error){
                 console.log("catch error : ",error)
             }
