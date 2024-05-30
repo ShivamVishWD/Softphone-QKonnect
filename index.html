@@ -497,7 +497,6 @@
                     credentialObj.identity_impu = `sip:${userExtension}@rec.minavo.in`
                     setTimeout(()=>{
                         authUser();
-                        sipRegister();
                         let option = "";
                         if(userExtension == "53106"){
                             option = '<option value="">--Select Agent--</option><option value="53277">53277 - Agent 1</option>';
@@ -506,6 +505,9 @@
                         }
                         document.querySelector("#agents-for-transfer").innerHTML = option;
                     }, 1000)
+                    setTimeout(()=>{
+                        sipRegister();
+                    }, 2000);
                 } else {
                     console.log('ResultError Extension: ',result.errors);
                 }
