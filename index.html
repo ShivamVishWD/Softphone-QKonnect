@@ -876,45 +876,49 @@
     
         // makes a call (SIP INVITE)
         function sipCall(s_type, phone_number='') {
-            if (oSipStack && !oSipSessionCall && !tsk_string_is_null_or_empty(phone_number)) {
-                if (s_type == 'call-screenshare') {
-                    if (!SIPml.isScreenShareSupported()) {
-                        alert('Screen sharing not supported. Are you using chrome 26+?');
-                        return;
-                    }
-                    if (!location.protocol.match('https')) {
-                        if (confirm("Screen sharing requires https://. Do you want to be redirected?")) {
-                            sipUnRegister();
-                            window.location = 'https://ns313841.ovh.net/call.htm';
+            try{
+                if (oSipStack && !oSipSessionCall && !tsk_string_is_null_or_empty(phone_number)) {
+                    if (s_type == 'call-screenshare') {
+                        if (!SIPml.isScreenShareSupported()) {
+                            alert('Screen sharing not supported. Are you using chrome 26+?');
+                            return;
                         }
+                        if (!location.protocol.match('https')) {
+                            if (confirm("Screen sharing requires https://. Do you want to be redirected?")) {
+                                sipUnRegister();
+                                window.location = 'https://ns313841.ovh.net/call.htm';
+                            }
+                            return;
+                        }
+                    }
+                    // btnCall.disabled = true;
+                    // btnHangUp.disabled = false;
+        
+                    if (window.localStorage) {
+                        oConfigCall.bandwidth = tsk_string_to_object(window.localStorage.getItem('org.doubango.expert.bandwidth')); // already defined at stack-level but redifined to use latest values
+                        oConfigCall.video_size = tsk_string_to_object(window.localStorage.getItem('org.doubango.expert.video_size')); // already defined at stack-level but redifined to use latest values
+                    }
+        
+                    // create call session
+                    oSipSessionCall = oSipStack.newSession(s_type, oConfigCall);
+                    // make call
+                    if (oSipSessionCall.call(phone_number) != 0) {
+                        oSipSessionCall = null;
+                        // txtCallStatus.value = 'Failed to make call';
+                        // btnCall.disabled = false;
+                        // btnHangUp.disabled = true;
+                        console.log('Failed to make call')
                         return;
                     }
+                    saveCallOptions();
                 }
-                // btnCall.disabled = true;
-                // btnHangUp.disabled = false;
-    
-                if (window.localStorage) {
-                    oConfigCall.bandwidth = tsk_string_to_object(window.localStorage.getItem('org.doubango.expert.bandwidth')); // already defined at stack-level but redifined to use latest values
-                    oConfigCall.video_size = tsk_string_to_object(window.localStorage.getItem('org.doubango.expert.video_size')); // already defined at stack-level but redifined to use latest values
+                else if (oSipSessionCall) {
+                    // txtCallStatus.innerHTML = '<i>Connecting...</i>';
+                    console.log('Connecting ....')
+                    oSipSessionCall.accept(oConfigCall);
                 }
-    
-                // create call session
-                oSipSessionCall = oSipStack.newSession(s_type, oConfigCall);
-                // make call
-                if (oSipSessionCall.call(phone_number) != 0) {
-                    oSipSessionCall = null;
-                    // txtCallStatus.value = 'Failed to make call';
-                    // btnCall.disabled = false;
-                    // btnHangUp.disabled = true;
-                    console.log('Failed to make call')
-                    return;
-                }
-                saveCallOptions();
-            }
-            else if (oSipSessionCall) {
-                // txtCallStatus.innerHTML = '<i>Connecting...</i>';
-                console.log('Connecting ....')
-                oSipSessionCall.accept(oConfigCall);
+            }catch(error){
+                console.log("Catch errror sipCall : ",error);
             }
         }
     
