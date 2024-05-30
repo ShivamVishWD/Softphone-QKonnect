@@ -898,7 +898,8 @@
                 // btnHangUp.disabled = false;
     
                 if (window.localStorage) {
-                    if('bandwidth' in oConfigCall){
+                    console.log('oConfigCall var : ',oConfigCall);
+                    if(oConfigCall && 'bandwidth' in oConfigCall){
                         oConfigCall.bandwidth = tsk_string_to_object(window.localStorage.getItem('org.doubango.expert.bandwidth')); // already defined at stack-level but redifined to use latest values
                     }
                 }
