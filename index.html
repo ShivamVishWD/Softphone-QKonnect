@@ -899,9 +899,9 @@
     
                 if (window.localStorage) {
                     console.log('oConfigCall var : ',oConfigCall);
-                    if(oConfigCall && 'bandwidth' in oConfigCall){
+                    //if(oConfigCall && 'bandwidth' in oConfigCall){
                         oConfigCall.bandwidth = tsk_string_to_object(window.localStorage.getItem('org.doubango.expert.bandwidth')); // already defined at stack-level but redifined to use latest values
-                    }
+                    //}
                 }
     
                 // create call session
