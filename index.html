@@ -1345,41 +1345,37 @@
 
     <!-- Salesforce Package Calls -->
     <script type="text/javascript">
-        window.onload = function() {
-            setTimeout(function(){
-                args = {
-                    apexClass: 'GetUserInfo',
-                    methodName: 'getExtension',
-                    methodParams: '',
-                    callback: function(result) {
-                        if (result.success) {
-                            console.log('Result Extension: ',result);
-                            userExtension = result.returnValue.runApex;
-                            credentialObj.identity_impi = userExtension;
-                            credentialObj.identity_display_name = userExtension;
-                            credentialObj.identity_impu = `sip:${userExtension}@rec.minavo.in`
-                            setTimeout(()=>{
-                                authUser();
-                                let option = "";
-                                if(userExtension == "53106"){
-                                    option = '<option value="">--Select Agent--</option><option value="53277">53277 - Agent 1</option>';
-                                }else{
-                                    option = '<option value="">--Select Agent--</option><option value="53106">53106 - Agent 2</option>';
-                                }
-                                document.querySelector("#agents-for-transfer").innerHTML = option;
-                            }, 1000)
-                            setTimeout(()=>{
-                                sipRegister();
-                            }, 2000);
-                        } else {
-                            console.log('ResultError Extension: ',result.errors);
+        args = {
+            apexClass: 'GetUserInfo',
+            methodName: 'getExtension',
+            methodParams: '',
+            callback: function(result) {
+                if (result.success) {
+                    console.log('Result Extension: ',result);
+                    userExtension = result.returnValue.runApex;
+                    credentialObj.identity_impi = userExtension;
+                    credentialObj.identity_display_name = userExtension;
+                    credentialObj.identity_impu = `sip:${userExtension}@rec.minavo.in`
+                    setTimeout(()=>{
+                        authUser();
+                        let option = "";
+                        if(userExtension == "53106"){
+                            option = '<option value="">--Select Agent--</option><option value="53277">53277 - Agent 1</option>';
+                        }else{
+                            option = '<option value="">--Select Agent--</option><option value="53106">53106 - Agent 2</option>';
                         }
-                    }
-                };
-                // Call APEX Class to get
-                sforce.opencti.runApex(args)
-            }, 1000)
-        }
+                        document.querySelector("#agents-for-transfer").innerHTML = option;
+                    }, 1000)
+                    setTimeout(()=>{
+                        sipRegister();
+                    }, 2000);
+                } else {
+                    console.log('ResultError Extension: ',result.errors);
+                }
+            }
+        };
+        // Call APEX Class to get
+        sforce.opencti.runApex(args)
 
         args = {
             listener: function(result) {
