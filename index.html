@@ -252,17 +252,9 @@
         var bDisableVideo = false;
         var viewVideoLocal, viewVideoRemote, viewLocalScreencast; // <video> (webrtc) or <div> (webrtc4all)
         var oConfigCall = {
-            audio_remote: audioRemote,
-            video_local: viewVideoLocal,
-            video_remote: viewVideoRemote,
             screencast_window_id: 0x00000000, // entire desktop
             bandwidth: { audio: undefined, video: undefined },
             video_size: { minWidth: undefined, minHeight: undefined, maxWidth: undefined, maxHeight: undefined },
-            events_listener: { events: '*', listener: onSipEventSession },
-            sip_caps: [
-                            { name: '+g.oma.sip-im' },
-                            { name: 'language', value: '\"en,fr\"' }
-            ]
         };
         var oReadyStateTimer;
     
