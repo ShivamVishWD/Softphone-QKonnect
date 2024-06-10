@@ -607,6 +607,7 @@
             }
     
             var preInit = function () {
+                console.log("Pre Init Function Called");
                 // set default webrtc type (before initialization)
                 var s_webrtc_type = getPVal("wt");
                 var s_fps = getPVal("fps");
@@ -656,7 +657,7 @@
         };
     
         function postInit() {
-            console.log('post init function ')
+            console.log("Post Init Function Called");
             // check for WebRTC support
             if (!SIPml.isWebRtcSupported()) {
                 // is it chrome?
@@ -703,6 +704,7 @@
     
             // btnRegister.disabled = false;
             document.body.style.cursor = 'default';
+            console.log("Setting up oConfigCall variable");
             oConfigCall = {
                 audio_remote: audioRemote,
                 video_local: viewVideoLocal,
