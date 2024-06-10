@@ -258,45 +258,6 @@
     
             callingPanel.classList.remove("active")
         }
-    
-        function showDisposition(){
-            dialPad.classList.remove('show')
-            dialPad.classList.add("hide")
-    
-            disposition.classList.remove("hide")
-            disposition.classList.add("show")
-    
-            callingPanel.classList.remove("active")
-        }
-    
-        function showCallingPanel(name="", phoneNumber=""){
-            disposition.classList.remove("show")
-            disposition.classList.add("hide")
-    
-            document.getElementById("contact-number").innerText = phoneNumber;
-            document.getElementById("contact-name").innerText = name;
-            
-            dialPad.classList.remove('show')
-            dialPad.classList.add("hide")
-    
-            callingPanel.classList.add("active")
-        }
-    
-        function showHangupBtn(){
-            callRecieveBtns.classList.add("hide")
-            callRecieveBtns.classList.remove("show")
-    
-            hangupBtn.classList.remove("hide")
-            hangupBtn.classList.add("show")
-        }
-    
-        function hideHangupBtn(){
-            hangupBtn.classList.add("hide")
-            hangupBtn.classList.remove("show")
-            
-            callRecieveBtns.classList.add("show")
-            callRecieveBtns.classList.remove("hide")
-        }
         
         document.querySelector("#reject-call").addEventListener("click", ()=>{
             sipHangUp();
@@ -393,8 +354,6 @@
                 console.log("catch error : ",error)
             }
         }
-
-        
 
         function generateCustomCallId() {
             let timestamp = new Date().getTime().toString();
