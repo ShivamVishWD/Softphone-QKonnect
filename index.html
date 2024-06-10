@@ -634,7 +634,6 @@
                 //tsk_utils_log_info(_rinningApps);
             }
     
-            /*
             oReadyStateTimer = setInterval(function () {
                 if (document.readyState === "complete") {
                     clearInterval(oReadyStateTimer);
@@ -643,13 +642,10 @@
                 }
             },
             500);
-            */
     
-            if (document.readyState === "complete") {
-                console.log("Document is Ready")
+            /*if (document.readyState === "complete") {
                 preInit();
             }
-            /*
             else {
                 document.onreadystatechange = function () {
                         if (document.readyState === "complete") {
