@@ -619,6 +619,7 @@
     
                 if (s_webrtc_type) SIPml.setWebRtcType(s_webrtc_type);
 
+                console.log("Setting up oConfigCall variable");
                 oConfigCall = {
                     audio_remote: audioRemote,
                     video_local: viewVideoLocal,
@@ -632,6 +633,8 @@
                                     { name: 'language', value: '\"en,fr\"' }
                     ]
                 };
+
+                console.log('oConfigCall initialize : ',oConfigCall);
     
                 // initialize SIPML5
                 SIPml.init(postInit);
