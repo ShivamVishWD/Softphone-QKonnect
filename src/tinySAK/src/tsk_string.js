@@ -96,10 +96,8 @@ function tsk_string_to_int(s_str, i_default) {
 }
 
 function tsk_string_to_object(s_str) {
-    console.log("tsk_string_to_object str : ",s_str)
      if(!tsk_string_is_null_or_empty(s_str)){
-        console.log("tsk_string_is_null_or_empty str : ",s_str)
-        try{ eval("var obj = " + s_str + ";"); console.log(obj, 'object '); return obj; }
+        try{ eval("var obj = " + s_str + ";"); return obj; }
         catch(e){}
      }
 }
