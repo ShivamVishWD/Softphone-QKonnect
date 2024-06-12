@@ -372,7 +372,9 @@
             if(document.querySelector("#call-was").value == "Callback" && document.querySelector("#callback-datetime").value == ""){
                 return;
             }
-            const params = { callId: generateCustomCallId(), disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
+            const callLog_CallID = await getCallIdOfCallNumber();
+            console.log("callLog_CallID : ",callLog_CallID);
+            const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
             console.log(params, 'params disposition');
             args = {
                 apexClass: 'CreateCallLog',
@@ -425,6 +427,47 @@
                 response = await response.json();
                 console.log("callback json response : ",response);
             }
+        }
+
+        function getCallIdOfCallNumber(){
+            return new Promise(async(resolve, reject) => {
+                try{
+                    const phoneNo = String(document.querySelector("#caller-number").value);
+                    const data = JSON.stringify({
+                        "api_key": userAPIKey,
+                        "callerNumber": phoneNo
+                    });
+
+                    const requestOptions = {
+                        method: "POST",
+                        Headers: {
+                            "Accept": '*/*',
+                            'Content-Type': 'application/json',
+                            "Access-Control-Allow-Origin": "*",
+                            "Access-Control-Allow-Headers":"X-Requested-With"
+                        },
+                        body: data,
+                        redirect: "follow"
+                    };
+
+                    fetch("https://qkonnect.io/api/aashirwadSalesforceGetCallId.php", requestOptions)
+                    .then((response) => response.text())
+                    .then((result) => {
+                        console.log(result, 'get Call Id');
+                        if(result.status == "200"){
+                            resolve(result?.callId);
+                        }else{
+                            resolve(generateCustomCallId());
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error)
+                        resolve(generateCustomCallId());
+                    });
+                }catch(error){
+                    resolve(generateCustomCallId());
+                }
+            })
         }
     </script>
     <script src="https://quadraforttechnologies-4c-dev-ed.lightning.force.com/support/api/56.0/interaction.js" type="text/javascript"></script>
@@ -1727,7 +1770,7 @@
                 console.log("data : ",data);
                 let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
                     method: "POST",
-                    headers: {
+                    Headers: {
                         "Accept": '*/*',
                         'Content-Type': 'application/json',
                         "Access-Control-Allow-Origin": "*",
@@ -1736,7 +1779,7 @@
                     body: JSON.stringify(data)
                 })
                 console.log('response call transfer before : ',response);
-                response = await response.text();
+                response = await response.json();
                 console.log("response call transfer api : ",response);
             }catch(error){
                 console.log("catch error : ",error)
