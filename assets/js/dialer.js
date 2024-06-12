@@ -113,12 +113,12 @@ var DialPad = {
 			var screen = $(".dial-screen").text();
 
 			switch (e.which) {
-				case 8:
-					DialPad.press($('.dial-key-wrap[data-key="back"]'));
-					screen = $(".dial-screen").text(
-						screen.substring(0, screen.length - 1)
-					);
-					break;
+				// case 8:
+				// 	DialPad.press($('.dial-key-wrap[data-key="back"]'));
+				// 	screen = $(".dial-screen").text(
+				// 		screen.substring(0, screen.length - 1)
+				// 	);
+				// 	break;
 				case 13:
 					DialPad.press($('.dial-key-wrap[data-key="call"]'));
 					DialPad.call();
@@ -164,7 +164,7 @@ var DialPad = {
 					screen = $(".dial-screen").text(screen + "9");
 					break;
 			}
-			var array = [8, 13, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
+			var array = [13, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
 			var prevent = true;
 			for (var i = 0; i < array.length; i++) {
 				if (key == array[i]) {
@@ -172,9 +172,9 @@ var DialPad = {
 					break;
 				}
 			}
-			if (key == 8) {
-				return false;
-			}
+			// if (key == 8) {
+			// 	return false;
+			// }
 		});
 	},
 	call: function (info) {
