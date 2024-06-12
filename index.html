@@ -1762,6 +1762,7 @@
             try{
                 const transferAgentElem = document.getElementById("agents-for-transfer");
                 const toExtension = transferAgentElem.value;
+                /*
                 const data = {
                     api_key: userAPIKey,
                     fromnumber: userExtension,
@@ -1771,7 +1772,7 @@
                 let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
                     method: "POST",
                     Headers: {
-                        "Accept": '*/*',
+                        
                         'Content-Type': 'application/json',
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Headers":"X-Requested-With"
@@ -1781,6 +1782,29 @@
                 console.log('response call transfer before : ',response);
                 response = await response.json();
                 console.log("response call transfer api : ",response);
+                */
+                const data = JSON.stringify({
+                    "api_key": userAPIKey,
+                    "fromnumber": userExtension,
+                    "destnumber": toExtension
+                });
+
+                const requestOptions = {
+                    method: "POST",
+                    Headers: {
+                        "Accept": '*/*',
+                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers":"X-Requested-With"
+                    },
+                    body: data,
+                    redirect: "follow"
+                };
+
+                fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result, "Call Transfer Response"))
+                .catch((error) => console.error(error));
             }catch(error){
                 console.log("catch error : ",error)
             }
