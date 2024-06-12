@@ -451,7 +451,7 @@
                     };
 
                     fetch("https://qkonnect.io/api/aashirwadSalesforceGetCallId.php", requestOptions)
-                    .then((response) => response.text())
+                    .then((response) => response.json())
                     .then((result) => {
                         console.log(result, 'get Call Id');
                         console.log(result.status, 'get Call Id Status');
