@@ -878,16 +878,7 @@
                             { name: 'Organization', value: 'Doubango Telecom' }
                     ]
                 });
-                args = {
-                    apexClass: 'SoftphoneConnectionStatus',
-                    methodName: 'handleConnection',
-                    methodParams: 'inputBool='+true,
-                    callback: function(result) {
-                        console.log(result, 'connection result')
-                    }
-                };
-                // Call APEX Class to get
-                sforce.opencti.runApex(args)  
+                 
                 if (oSipStack.start() != 0) {
                     // txtRegStatus.innerHTML = '<b>Failed to start the SIP stack</b>';
                     console.log('Failed to start the SIP stack')
@@ -1473,6 +1464,16 @@
                         callInitStatus = "Connected";
                         if(e.type == "connected"){
                             document.querySelector(".title").innerHTML = "Connected";
+                            args = {
+                                apexClass: 'SoftphoneConnectionStatus',
+                                methodName: 'handleConnection',
+                                methodParams: 'inputBool='+true,
+                                callback: function(result) {
+                                    console.log(result, 'connection result success')
+                                }
+                            };
+                            // Call APEX Class to get
+                            sforce.opencti.runApex(args) 
                         }
                         args = {
                             callback: function(result) {
