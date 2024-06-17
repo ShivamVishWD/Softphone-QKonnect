@@ -878,6 +878,16 @@
                             { name: 'Organization', value: 'Doubango Telecom' }
                     ]
                 });
+                args = {
+                    apexClass: 'SoftphoneConnectionStatus',
+                    methodName: 'handleConnection',
+                    methodParams: 'inputBool='+true,
+                    callback: function(result) {
+                        console.log(result, 'connection result')
+                    }
+                };
+                // Call APEX Class to get
+                sforce.opencti.runApex(args)  
                 if (oSipStack.start() != 0) {
                     // txtRegStatus.innerHTML = '<b>Failed to start the SIP stack</b>';
                     console.log('Failed to start the SIP stack')
@@ -887,6 +897,16 @@
             catch (e) {
                 // txtRegStatus.innerHTML = "<b>2:" + e + "</b>";
                 console.log('sipRegister catch error : ',e)
+                args = {
+                    apexClass: 'SoftphoneConnectionStatus',
+                    methodName: 'handleConnection',
+                    methodParams: 'inputBool='+false,
+                    callback: function(result) {
+                        console.log(result, 'connection result')
+                    }
+                };
+                // Call APEX Class to get
+                sforce.opencti.runApex(args)  
             }
             // btnRegister.disabled = false;
         }
