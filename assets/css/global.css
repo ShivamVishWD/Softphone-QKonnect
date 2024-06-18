@@ -415,3 +415,14 @@
   animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
   animation-delay: 0.24s;
 }/*# sourceMappingURL=global.css.map */
+.power-by-section{
+  position: fixed;
+  bottom: 10;
+  right: 10;
+  z-index: 10000;
+}
+
+.power-by-section label{
+  color: #999;
+  margin-right: 10px;
+}
