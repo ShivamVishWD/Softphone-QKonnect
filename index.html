@@ -126,6 +126,9 @@
                     </select>
                     <button type="button" onclick="callTransfer()">Transfer</button>
                 </div>
+                <div>
+                    <button class="btn btn-sm btn-success" onclick="newCase()">New Case</button>
+                </div>
             </div>
         </div>
         <div class="dial-pad show">
@@ -1899,6 +1902,24 @@
             }catch(error){
                 console.log("catch error : ",error)
             }
+        }
+
+        function newCase(){
+            sforce.opencti.screenPop({
+                type: sforce.opencti.SCREENPOP_TYPE.SOBJECT,
+                params: {
+                    recordType: 'Case',
+                    actionName: 'New'
+                },
+                callback: function(response) {
+                    console.log("response new case : ",response);
+                    if (response.success) {
+                        console.log("Screen pop successful");
+                    } else {
+                        console.error("Screen pop failed: ", response.errors);
+                    }
+                }
+            });
         }
     </script>
     
