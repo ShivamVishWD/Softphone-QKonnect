@@ -377,7 +377,7 @@
             const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
             console.log(params, 'params disposition');
             args = {
-                apexClass: 'CreateCallLog',
+                apexClass: 'QKonnectCTI.CreateCallLog',
                 methodName: 'insertUpdateCallLog',
                 methodParams: `body=${JSON.stringify(params)}`,
                 callback: function(result) {
@@ -483,7 +483,7 @@
         sforce.opencti.enableClickToDial(args)
         */
         args = {
-            apexClass: 'GetUserInfo',
+            apexClass: 'QKonnectCTI.GetUserInfo',
             methodName: 'getExtension',
             methodParams: '',
             callback: function(result) {
@@ -546,7 +546,7 @@
                 
                 
                 args = {
-                    apexClass: 'GetRecordId',
+                    apexClass: 'QKonnectCTI.GetRecordId',
                     methodName: 'getAccountId',
                     methodParams: 'phoneNumber='+result.number,
                     callback: function(result) {
@@ -888,16 +888,6 @@
             catch (e) {
                 // txtRegStatus.innerHTML = "<b>2:" + e + "</b>";
                 console.log('sipRegister catch error : ',e)
-                args = {
-                    apexClass: 'SoftphoneConnectionStatus',
-                    methodName: 'handleConnection',
-                    methodParams: 'inputBool='+false,
-                    callback: function(result) {
-                        console.log(result, 'connection result')
-                    }
-                };
-                // Call APEX Class to get
-                sforce.opencti.runApex(args)  
             }
             // btnRegister.disabled = false;
         }
@@ -1377,7 +1367,7 @@
                             showNotifICall(sRemoteNumber);
                             document.querySelector("#caller-number").value = String(sRemoteNumber).slice(-10);
                             args = {
-                                apexClass: 'GetRecordId',
+                                apexClass: 'QKonnectCTI.GetRecordId',
                                 methodName: 'getAccountId',
                                 methodParams: 'phoneNumber='+String(sRemoteNumber).slice(-10),
                                 callback: function(result) {
@@ -1464,16 +1454,6 @@
                         callInitStatus = "Connected";
                         if(e.type == "connected"){
                             document.querySelector(".title").innerHTML = "Connected";
-                            args = {
-                                apexClass: 'SoftphoneConnectionStatus',
-                                methodName: 'handleConnection',
-                                methodParams: 'inputBool='+true,
-                                callback: function(result) {
-                                    console.log(result, 'connection result success')
-                                }
-                            };
-                            // Call APEX Class to get
-                            sforce.opencti.runApex(args) 
                         }
                         args = {
                             callback: function(result) {
@@ -1749,7 +1729,7 @@
             document.querySelector("#caller-number").value = phoneNumber;
 
             args = {
-                apexClass: 'GetRecordId',
+                apexClass: 'QKonnectCTI.GetRecordId',
                 methodName: 'getAccountId',
                 methodParams: 'phoneNumber='+phoneNumber,
                 callback: function(result) {
