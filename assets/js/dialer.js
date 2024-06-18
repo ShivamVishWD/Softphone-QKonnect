@@ -22,7 +22,7 @@ var DialPad = {
 			$(".left-pan").removeClass("active");
 			$(".calling").fadeOut(100);
 			$(".contacts").fadeIn(800);
-			$(".calling .photo").html("");
+			// $(".calling .photo").html("");
 			$(".calling .name").html("Unknown");
 			$(".calling .number").html("");
 		});
@@ -192,7 +192,7 @@ var DialPad = {
 					? info.find(".name").text()
 					: "Unknown";
 				number = info.find(".phone").text();
-				$(".calling .photo").html(photo);
+				// $(".calling .photo").html(photo);
 				$(".calling .name").text(name);
 				$(".calling .number").text(number);
 			} else {

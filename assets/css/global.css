@@ -308,8 +308,12 @@
   transition: background 0.3s ease-in-out 0s;
 }
 
+.dial-pad-wrap .dial-table .dial-key-wrap.handleBtn{
+  margin-bottom: 0px !important;
+}
+
 .dial-pad-wrap .dial-table .dial-table-col .dial-key {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 400;
   min-height: 30px;
   line-height: 30px;
@@ -322,7 +326,7 @@
 
 .dial-pad-wrap .dial-table .dial-sub-key {
   color: #aaa;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
 }
 
