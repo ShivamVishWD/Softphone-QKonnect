@@ -107,7 +107,7 @@
                 <div class="name rubberBand animated" id="contact-name">Unknown</div>
                 <div class="number" id="contact-number"></div>
                 <div class="call-end show bounceInUp animated">
-                    <button type="button" class="btn btn-hangup" onclick="sipHangUp()"><img class="hangup-icon" src="https://dmsdemos.000webhostapp.com/assets/images/endcall.png"/></button>
+                    <button type="button" class="btn btn-hangup" onclick="sipHangUp()"><img class="hangup-icon" src="assets/images/phone.png"/></button>
                 </div>
                 <div class="call-recieve hide">
                     <button type="button" class="btn btn-danger btn-xl btn-round" id="reject-call"><img src="https://dmsdemos.000webhostapp.com/assets/images/no-call.png" style="height: 20px; width: 20px"/></button>
@@ -602,6 +602,20 @@
         // Call APEX Class to get
         sforce.opencti.runApex(args) 
         
+
+        var urlParams = new URLSearchParams(window.location.search);
+        console.log("urlParams : ",urlParams)
+        var getExtension = urlParams.get('extension');
+
+        if(getExtension && getExtension != null && getExtension != ''){
+            credentialObj.identity_impi = getExtension;
+            credentialObj.identity_display_name = getExtension;
+            credentialObj.identity_impu = `sip:${getExtension}@rec.minavo.in`;
+            authUser();
+            setTimeout(()=>{
+                sipRegister();
+            }, 2000);
+        }
         
         args = {
             listener: function(result) {
