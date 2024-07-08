@@ -283,6 +283,13 @@
         var callInitStatus = "Nothing";
         var userAPIKey = "f935e008-0d27-11ef-a03c-6045bdaaffcb";
 
+        var urlParams = new URLSearchParams(window.location.search);
+        var getApiKey = urlParams.get('apikey');
+
+        if(getApiKey && getApiKey != null && getApiKey != undefined && getApiKey != ''){
+            userAPIKey = getApiKey;
+        }
+
         var credentialObj = {
             expert_disable_video: 'false',
             identity_password: 'rec%20@24!23',
