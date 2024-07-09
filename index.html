@@ -1482,10 +1482,11 @@
                             // btnHangUp.disabled = false;
     
                             startRingTone();
+                            /*
                             window.parent.document.dispatchEvent(new CustomEvent('incomingCall', {
                                 detail: {message: "Call Incoming"}
                             }))
-    
+                            */
                             var sRemoteNumber = (oSipSessionCall.getRemoteFriendlyName() || 'unknown');
                             console.log('sRemoteNumber Incoming call from : ',sRemoteNumber)
                             //txtCallStatus.innerHTML = "<i>Incoming call from [<b>" + sRemoteNumber + "</b>]</i>";
