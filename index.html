@@ -125,8 +125,6 @@
                         <option value="">--Select Agent</option>
                     </select>
                     <button type="button" onclick="callTransfer()">Transfer</button>
-                </div>
-                <div>
                     <button onclick="newCase()">New Case</button>
                 </div>
             </div>
@@ -619,6 +617,7 @@
             credentialObj.identity_impi = getExtension;
             credentialObj.identity_display_name = getExtension;
             credentialObj.identity_impu = `sip:${getExtension}@rec.minavo.in`;
+            document.querySelector(".dialpad-call").style.display = 'none';
             authUser();
             setTimeout(()=>{
                 sipRegister();
@@ -1531,6 +1530,10 @@
                                 }
                             };
                             sforce.opencti.setSoftphonePanelVisibility(args)
+
+                            window.parent.document.dispatchEvent(new CustomEvent('incomingCall', {
+                                detail: {message: "Call Incoming"}
+                            }))
 
                             // Dialpad.call();
                         }
