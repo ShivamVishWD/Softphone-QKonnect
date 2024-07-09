@@ -284,9 +284,8 @@
         var userAPIKey = "f935e008-0d27-11ef-a03c-6045bdaaffcb";
 
         var urlParams = new URLSearchParams(window.location.search);
-        console.log("urlParams : ",urlParams);
         var getApiKey = urlParams.get('apikey');
-        console.log("getApiKey : ",getApiKey);
+
         if(getApiKey && getApiKey != null && getApiKey != undefined && getApiKey != ''){
             userAPIKey = getApiKey;
         }
@@ -475,7 +474,7 @@
             const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
             console.log(params, 'params disposition');
             args = {
-                apexClass: 'QKonnectCTI.CreateCallLog',
+                apexClass: 'CreateCallLog',
                 methodName: 'insertUpdateCallLog',
                 methodParams: `body=${JSON.stringify(params)}`,
                 callback: function(result) {
@@ -581,7 +580,7 @@
         sforce.opencti.enableClickToDial(args)
         */
         args = {
-            apexClass: 'QKonnectCTI.GetUserInfo',
+            apexClass: 'GetUserInfo',
             methodName: 'getExtension',
             methodParams: '',
             callback: function(result) {
@@ -658,7 +657,7 @@
                 
                 
                 args = {
-                    apexClass: 'QKonnectCTI.GetRecordId',
+                    apexClass: 'GetRecordId',
                     methodName: 'getAccountId',
                     methodParams: 'phoneNumber='+result.number,
                     callback: function(result) {
@@ -1479,7 +1478,7 @@
                             showNotifICall(sRemoteNumber);
                             document.querySelector("#caller-number").value = String(sRemoteNumber).slice(-10);
                             args = {
-                                apexClass: 'QKonnectCTI.GetRecordId',
+                                apexClass: 'GetRecordId',
                                 methodName: 'getAccountId',
                                 methodParams: 'phoneNumber='+String(sRemoteNumber).slice(-10),
                                 callback: function(result) {
@@ -1841,7 +1840,7 @@
             document.querySelector("#caller-number").value = phoneNumber;
 
             args = {
-                apexClass: 'QKonnectCTI.GetRecordId',
+                apexClass: 'GetRecordId',
                 methodName: 'getAccountId',
                 methodParams: 'phoneNumber='+phoneNumber,
                 callback: function(result) {
