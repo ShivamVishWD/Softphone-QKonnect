@@ -1166,9 +1166,20 @@
                 document.querySelector(".dispotition").classList.add("hide")
             }
 
+            var urlParams = new URLSearchParams(window.location.search);
+            console.log("urlParams : ",urlParams)
+            var getExtension = urlParams.get('extension');
+
+            if(getExtension && getExtension != null && getExtension != ''){
+                document.querySelector(".dispotition").classList.remove("show")
+                document.querySelector(".dispotition").classList.add("hide")
+
+                document.querySelector(".dial-pad").classList.add("show")
+                document.querySelector(".dial-pad").classList.remove("hide")
+            }
+
             $(".left-pan").removeClass("active");
             $(".calling").fadeOut(100);
-            $(".calling .photo").html("");
             $(".calling .name").html("Unknown");
             $(".calling .number").html("");
         }
