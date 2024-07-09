@@ -1471,6 +1471,9 @@
                             // btnHangUp.disabled = false;
     
                             startRingTone();
+                            window.parent.document.dispatchEvent(new CustomEvent('incomingCall', {
+                                detail: {message: "Call Incoming"}
+                            }))
     
                             var sRemoteNumber = (oSipSessionCall.getRemoteFriendlyName() || 'unknown');
                             console.log('sRemoteNumber Incoming call from : ',sRemoteNumber)
@@ -1530,10 +1533,6 @@
                                 }
                             };
                             sforce.opencti.setSoftphonePanelVisibility(args)
-
-                            window.parent.document.dispatchEvent(new CustomEvent('incomingCall', {
-                                detail: {message: "Call Incoming"}
-                            }))
 
                             // Dialpad.call();
                         }
