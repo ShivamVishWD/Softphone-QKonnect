@@ -47,12 +47,13 @@
   bottom: 0;
   z-index: 1;
   position: absolute;
-  background: linear-gradient(90deg, #8B3A8C 0%, #EA396E 100%);
+  background: #ecf0f1;
   transition: width 0.4s ease-in-out 0s;
 }
 
 .dial-pad-wrap .left-pan.active {
   width: 100%;
+  background: linear-gradient(90deg, #8B3A8C 0%, #EA396E 100%);
 }
 
 .dial-pad-wrap .left-pan .people .photo,
