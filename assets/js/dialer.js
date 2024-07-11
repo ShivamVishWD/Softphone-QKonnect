@@ -36,7 +36,7 @@ var DialPad = {
 			})
 			.mousedown(function () {
 				pressTimer = window.setTimeout(function () {
-					$(".dial-screen").text("");
+					$(".dial-screen").val("");
 				}, 1000);
 				return false;
 			});
@@ -44,11 +44,11 @@ var DialPad = {
 	keypad: function () {
 		$(".dial-key-wrap").on("click", function () {
 			var key = $(this).data("key");
-			var display = $(".dial-screen").text();
+			var display = $(".dial-screen").val();
 			switch (key) {
 				case "back":
 					DialPad.press($('.dial-key-wrap[data-key="back"]'));
-					display = $(".dial-screen").text(
+					display = $(".dial-screen").val(
 						display.substring(0, display.length - 1)
 					);
 					DialPad.longClick();
@@ -59,47 +59,47 @@ var DialPad = {
 					break;
 				case 0:
 					DialPad.press($('.dial-key-wrap[data-key="0"]'));
-					display = $(".dial-screen").text(display + "0");
+					display = $(".dial-screen").val(display + "0");
 					break;
 				case 1:
 					DialPad.press($('.dial-key-wrap[data-key="1"]'));
-					display = $(".dial-screen").text(display + "1");
+					display = $(".dial-screen").val(display + "1");
 					break;
 				case 2:
 					DialPad.press($('.dial-key-wrap[data-key="2"]'));
-					display = $(".dial-screen").text(display + "2");
+					display = $(".dial-screen").val(display + "2");
 					break;
 				case 3:
 					DialPad.press($('.dial-key-wrap[data-key="3"]'));
-					display = $(".dial-screen").text(display + "3");
+					display = $(".dial-screen").val(display + "3");
 					break;
 				case 4:
 					DialPad.press($('.dial-key-wrap[data-key="4"]'));
-					display = $(".dial-screen").text(display + "4");
+					display = $(".dial-screen").val(display + "4");
 					break;
 				case 5:
 					DialPad.press($('.dial-key-wrap[data-key="5"]'));
-					display = $(".dial-screen").text(display + "5");
+					display = $(".dial-screen").val(display + "5");
 					break;
 				case 6:
 					DialPad.press($('.dial-key-wrap[data-key="6"]'));
-					display = $(".dial-screen").text(display + "6");
+					display = $(".dial-screen").val(display + "6");
 					break;
 				case 7:
 					DialPad.press($('.dial-key-wrap[data-key="7"]'));
-					display = $(".dial-screen").text(display + "7");
+					display = $(".dial-screen").val(display + "7");
 					break;
 				case 8:
 					DialPad.press($('.dial-key-wrap[data-key="8"]'));
-					display = $(".dial-screen").text(display + "8");
+					display = $(".dial-screen").val(display + "8");
 					break;
 				case 9:
 					DialPad.press($('.dial-key-wrap[data-key="9"]'));
-					display = $(".dial-screen").text(display + "9");
+					display = $(".dial-screen").val(display + "9");
 					break;
 				case "*":
 					DialPad.press($('.dial-key-wrap[data-key="*"]'));
-					display = $(".dial-screen").text(display + "*");
+					display = $(".dial-screen").val(display + "*");
 					break;
 				case "#":
 					DialPad.press($('.dial-key-wrap[data-key="#"]'));
@@ -110,7 +110,7 @@ var DialPad = {
 		});
 		$(document).keydown(function (e) {
 			var key = e.which;
-			var screen = $(".dial-screen").text();
+			var screen = $(".dial-screen").val();
 
 			switch (e.which) {
 				// case 8:
@@ -125,43 +125,43 @@ var DialPad = {
 					break;
 				case 96:
 					DialPad.press($('.dial-key-wrap[data-key="0"]'));
-					screen = $(".dial-screen").text(screen + "0");
+					screen = $(".dial-screen").val(screen + "0");
 					break;
 				case 97:
 					DialPad.press($('.dial-key-wrap[data-key="1"]'));
-					screen = $(".dial-screen").text(screen + "1");
+					screen = $(".dial-screen").val(screen + "1");
 					break;
 				case 98:
 					DialPad.press($('.dial-key-wrap[data-key="2"]'));
-					screen = $(".dial-screen").text(screen + "2");
+					screen = $(".dial-screen").val(screen + "2");
 					break;
 				case 99:
 					DialPad.press($('.dial-key-wrap[data-key="3"]'));
-					screen = $(".dial-screen").text(screen + "3");
+					screen = $(".dial-screen").val(screen + "3");
 					break;
 				case 100:
 					DialPad.press($('.dial-key-wrap[data-key="4"]'));
-					screen = $(".dial-screen").text(screen + "4");
+					screen = $(".dial-screen").val(screen + "4");
 					break;
 				case 101:
 					DialPad.press($('.dial-key-wrap[data-key="5"]'));
-					screen = $(".dial-screen").text(screen + "5");
+					screen = $(".dial-screen").val(screen + "5");
 					break;
 				case 102:
 					DialPad.press($('.dial-key-wrap[data-key="6"]'));
-					screen = $(".dial-screen").text(screen + "6");
+					screen = $(".dial-screen").val(screen + "6");
 					break;
 				case 103:
 					DialPad.press($('.dial-key-wrap[data-key="7"]'));
-					screen = $(".dial-screen").text(screen + "7");
+					screen = $(".dial-screen").val(screen + "7");
 					break;
 				case 104:
 					DialPad.press($('.dial-key-wrap[data-key="8"]'));
-					screen = $(".dial-screen").text(screen + "8");
+					screen = $(".dial-screen").val(screen + "8");
 					break;
 				case 105:
 					DialPad.press($('.dial-key-wrap[data-key="9"]'));
-					screen = $(".dial-screen").text(screen + "9");
+					screen = $(".dial-screen").val(screen + "9");
 					break;
 			}
 			var array = [13, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
@@ -178,7 +178,7 @@ var DialPad = {
 		});
 	},
 	call: function (info) {
-		var num = $(".dial-screen").text().length;
+		var num = $(".dial-screen").val().length;
 		// if (num == 10) {
 			var photo, name, number;
 			$(".left-pan").addClass("active");
@@ -196,7 +196,7 @@ var DialPad = {
 				$(".calling .name").text(name);
 				$(".calling .number").text(number);
 			} else {
-				$(".calling .number").text($(".dial-screen").text());
+				$(".calling .number").text($(".dial-screen").val());
 			}
 			setTimeout(function () {
 				$(".call-end .btn").focus();
@@ -238,7 +238,7 @@ var DialPad = {
 		};
 		//var refine = function(){
 		var _this = $(".dial-screen");
-		if (_this.text()) {
+		if (_this.val()) {
 			$(".people .number")
 				.removeClass("match")
 				.hide()

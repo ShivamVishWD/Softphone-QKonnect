@@ -284,6 +284,8 @@
   margin-bottom: 20px;
   background: #eef1f2;
   border: 1px solid #e9eeef;
+  box-shadow: none;
+  margin-top: 4px;
 }
 
 .dial-pad-wrap .dial-table {
