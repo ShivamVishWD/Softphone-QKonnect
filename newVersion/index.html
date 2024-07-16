@@ -125,13 +125,12 @@
                         <option value="">--Select Agent</option>
                     </select>
                     <button type="button" onclick="callTransfer()">Transfer</button>
-                </div>
-                <div>
                     <button onclick="newCase()">New Case</button>
                 </div>
             </div>
         </div>
         <div class="dial-pad show">
+            <center><p id="alert-msg">Waiting for connection</p></center>
             <div class="agent-connect-status">
                 <select name="agent-status" id="agent-status" class="form-select" onchange="handleAgentStatus()">
                     <option value="Online">Online</option>
@@ -142,7 +141,7 @@
                     <option value="Meeting">Meeting</option>
                 </select>
             </div>
-            <input type="text" class="form-control dial-screen" id="dialed-number" onkeyup="checkNumber(event)">
+            <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number" onkeyup="checkNumber(event)">
             <!-- <div class="dial-screen" contenteditable="false" id="dialed-number"></div> -->
             <div class="dial-table">
                 <div class="dial-table-row">
@@ -285,8 +284,9 @@
         var userAPIKey = "f935e008-0d27-11ef-a03c-6045bdaaffcb";
 
         var urlParams = new URLSearchParams(window.location.search);
+        console.log("urlParams : ",urlParams);
         var getApiKey = urlParams.get('apikey');
-
+        console.log("getApiKey : ",getApiKey);
         if(getApiKey && getApiKey != null && getApiKey != undefined && getApiKey != ''){
             userAPIKey = getApiKey;
         }
@@ -629,6 +629,7 @@
             credentialObj.identity_impi = getExtension;
             credentialObj.identity_display_name = getExtension;
             credentialObj.identity_impu = `sip:${getExtension}@rec.minavo.in`;
+            document.querySelector(".dialpad-call").style.display = 'none';
             authUser();
             setTimeout(()=>{
                 sipRegister();
@@ -1000,12 +1001,15 @@
                             { name: 'Organization', value: 'Doubango Telecom' }
                     ]
                 });
-                 
                 if (oSipStack.start() != 0) {
                     // txtRegStatus.innerHTML = '<b>Failed to start the SIP stack</b>';
                     console.log('Failed to start the SIP stack')
                 }
-                else return;
+                else {
+                    document.getElementById("alert-msg").innerText = "Connected";
+                    document.getElementById("alert-msg").style.color = "green";
+                    return;
+                }
             }
             catch (e) {
                 // txtRegStatus.innerHTML = "<b>2:" + e + "</b>";
@@ -1016,6 +1020,8 @@
     
         // sends SIP REGISTER (expires=0) to logout
         function sipUnRegister() {
+            document.getElementById("alert-msg").innerText = "Not Connected";
+            document.getElementById("alert-msg").style.color = "red";
             if (oSipStack) {
                 oSipStack.stop(); // shutdown all sessions
             }
@@ -1175,6 +1181,18 @@
 
                 document.querySelector(".dispotition").classList.remove("show")
                 document.querySelector(".dispotition").classList.add("hide")
+            }
+
+            var urlParams = new URLSearchParams(window.location.search);
+            console.log("urlParams : ",urlParams)
+            var getExtension = urlParams.get('extension');
+
+            if(getExtension && getExtension != null && getExtension != ''){
+                document.querySelector(".dispotition").classList.remove("show")
+                document.querySelector(".dispotition").classList.add("hide")
+
+                document.querySelector(".dial-pad").classList.add("show")
+                document.querySelector(".dial-pad").classList.remove("hide")
             }
 
             $(".left-pan").removeClass("active");
@@ -1456,7 +1474,8 @@
                         stopRingTone();
     
                         uiVideoDisplayShowHide(false);
-                        sipRegister();
+                        if(e.type == 'failed_to_start')
+                            sipRegister();
                         // divCallOptions.style.opacity = 0;
     
                         // txtCallStatus.innerHTML = '';
@@ -1481,7 +1500,7 @@
                             // btnHangUp.disabled = false;
     
                             startRingTone();
-    
+                           
                             var sRemoteNumber = (oSipSessionCall.getRemoteFriendlyName() || 'unknown');
                             console.log('sRemoteNumber Incoming call from : ',sRemoteNumber)
                             //txtCallStatus.innerHTML = "<i>Incoming call from [<b>" + sRemoteNumber + "</b>]</i>";
@@ -1539,6 +1558,12 @@
                                     }
                                 }
                             };
+
+                            /*
+                            window.parent.document.dispatchEvent(new CustomEvent('incomingCall', {
+                                detail: {message: "Call Incoming"}
+                            }))
+                            */
                             sforce.opencti.setSoftphonePanelVisibility(args)
 
                             // Dialpad.call();
@@ -1845,6 +1870,10 @@
     </script>
     <script type="text/javascript">
         document.querySelector("#call-init").addEventListener("click", ()=>{
+            const isConnectedMsg = document.getElementById("alert-msg").innerText;
+            if(isConnectedMsg == "Waiting for connection" || isConnectedMsg == "Not Connected"){
+                return;
+            }
             document.querySelector(".title").innerHTML = "Calling";
             let phoneNumber = document.querySelector("#dialed-number").value;
             document.querySelector("#caller-number").value = phoneNumber;

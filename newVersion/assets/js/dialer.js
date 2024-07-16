@@ -179,6 +179,9 @@ var DialPad = {
 	},
 	call: function (info) {
 		var num = $(".dial-screen").val().length;
+		if(num == 0) return;
+		const isConnectedMsg = document.getElementById("alert-msg").innerText;
+		if(isConnectedMsg == "Waiting for connection" || isConnectedMsg == "Not Connected") return;
 		// if (num == 10) {
 			var photo, name, number;
 			$(".left-pan").addClass("active");

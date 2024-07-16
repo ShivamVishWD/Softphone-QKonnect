@@ -130,6 +130,7 @@
             </div>
         </div>
         <div class="dial-pad show">
+            <center><p id="alert-msg">Waiting for connection</p></center>
             <div class="agent-connect-status">
                 <select name="agent-status" id="agent-status" class="form-select" onchange="handleAgentStatus()">
                     <option value="Online">Online</option>
@@ -140,7 +141,7 @@
                     <option value="Meeting">Meeting</option>
                 </select>
             </div>
-            <input type="text" class="form-control dial-screen" id="dialed-number" onkeyup="checkNumber(event)">
+            <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number" onkeyup="checkNumber(event)">
             <!-- <div class="dial-screen" contenteditable="false" id="dialed-number"></div> -->
             <div class="dial-table">
                 <div class="dial-table-row">
@@ -1000,12 +1001,15 @@
                             { name: 'Organization', value: 'Doubango Telecom' }
                     ]
                 });
-                 
                 if (oSipStack.start() != 0) {
                     // txtRegStatus.innerHTML = '<b>Failed to start the SIP stack</b>';
                     console.log('Failed to start the SIP stack')
                 }
-                else return;
+                else {
+                    document.getElementById("alert-msg").innerText = "Connected";
+                    document.getElementById("alert-msg").style.color = "green";
+                    return;
+                }
             }
             catch (e) {
                 // txtRegStatus.innerHTML = "<b>2:" + e + "</b>";
@@ -1016,6 +1020,8 @@
     
         // sends SIP REGISTER (expires=0) to logout
         function sipUnRegister() {
+            document.getElementById("alert-msg").innerText = "Not Connected";
+            document.getElementById("alert-msg").style.color = "red";
             if (oSipStack) {
                 oSipStack.stop(); // shutdown all sessions
             }
@@ -1468,7 +1474,8 @@
                         stopRingTone();
     
                         uiVideoDisplayShowHide(false);
-                        sipRegister();
+                        if(e.type == 'failed_to_start')
+                            sipRegister();
                         // divCallOptions.style.opacity = 0;
     
                         // txtCallStatus.innerHTML = '';
@@ -1863,6 +1870,10 @@
     </script>
     <script type="text/javascript">
         document.querySelector("#call-init").addEventListener("click", ()=>{
+            const isConnectedMsg = document.getElementById("alert-msg").innerText;
+            if(isConnectedMsg == "Waiting for connection" || isConnectedMsg == "Not Connected"){
+                return;
+            }
             document.querySelector(".title").innerHTML = "Calling";
             let phoneNumber = document.querySelector("#dialed-number").value;
             document.querySelector("#caller-number").value = phoneNumber;
