@@ -294,11 +294,11 @@
         var credentialObj = {
             expert_disable_video: 'false',
             identity_password: 'rec%20@24!23',
-            expert_websocket_server_url: 'wss://rec.minavo.in:7443',
+            expert_websocket_server_url: 'wss://rec1.qkonnect.io:7443',
             identity_impi: userExtension,
             expert_sip_outboundproxy_url: '',
-            // identity_impu: 'sip:53106@rec.minavo.in',
-            identity_impu: `sip:${userExtension}@rec.minavo.in`,
+            // identity_impu: 'sip:53106@rec1.qkonnect.io',
+            identity_impu: `sip:${userExtension}@rec1.qkonnect.io`,
             identity_display_name: userExtension,
             expert_disable_early_ims: 'false',
             expert_video_size: '',
@@ -600,7 +600,7 @@
                     userExtension = result.returnValue.runApex;
                     credentialObj.identity_impi = userExtension;
                     credentialObj.identity_display_name = userExtension;
-                    credentialObj.identity_impu = `sip:${userExtension}@rec.minavo.in`;
+                    credentialObj.identity_impu = `sip:${userExtension}@rec1.qkonnect.io`;
                     authUser();
                     let option = "";
                     if(userExtension == "53106"){
@@ -628,7 +628,7 @@
         if(getExtension && getExtension != null && getExtension != ''){
             credentialObj.identity_impi = getExtension;
             credentialObj.identity_display_name = getExtension;
-            credentialObj.identity_impu = `sip:${getExtension}@rec.minavo.in`;
+            credentialObj.identity_impu = `sip:${getExtension}@rec1.qkonnect.io`;
             document.querySelector(".dialpad-call").style.display = 'none';
             authUser();
             setTimeout(()=>{
@@ -965,7 +965,7 @@
                 if (!o_impu || !o_impu.s_user_name || !o_impu.s_host) {
                     // txtRegStatus.innerHTML = "<b>[" + txtPublicIdentity.value + "] is not a valid Public identity</b>";
                     // btnRegister.disabled = false;
-                    //console.log('sip:53106@rec.minavo.in is not a valid Public identity')
+                    //console.log('sip:53106@rec1.qkonnect.io is not a valid Public identity')
                     return;
                 }
     
