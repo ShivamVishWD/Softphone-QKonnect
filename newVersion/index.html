@@ -110,8 +110,8 @@
                     <button type="button" class="btn btn-hangup" onclick="sipHangUp()"><img class="hangup-icon" src="assets/images/phone.png"/></button>
                 </div>
                 <div class="call-recieve hide">
-                    <button type="button" class="btn btn-danger btn-xl btn-round" id="reject-call"><img src="https://dmsdemos.000webhostapp.com/assets/images/no-call.png" style="height: 20px; width: 20px"/></button>
-                    <button type="button" class="btn btn-success btn-xl btn-round" id="pick-call"><img src="https://dmsdemos.000webhostapp.com/assets/images/phone-call.png" style="height: 20px; width: 20px"/></button>
+                    <button type="button" class="btn btn-danger btn-xl btn-round" id="reject-call"><img src="assets/images/end-call.png" style="height: 20px; width: 20px"/></button>
+                    <button type="button" class="btn btn-success btn-xl btn-round" id="pick-call"><img src="assets/images/call.png" style="height: 20px; width: 20px"/></button>
                 </div>
                 <div class="dialpad-call" style="margin-top: 10px;">
                     <!-- <table>
@@ -256,7 +256,7 @@
                     <input type="datetime-local" class="form-control" id="callback-datetime">
                 </div>
                 <div class="form-group mb-2">
-                    <label for="call-desc" class="form-label">Call Description</label>
+                    <label for="call-desc" class="form-label">Call Description <span style="color: red; font-weight: bold;">*<span style="font-size: 10px;">(Mendatory)</span></span></label>
                     <textarea id="call-desc" cols="30" rows="5" class="form-control"></textarea>
                 </div>
                 <div class="form-group mb-2">
@@ -590,6 +590,8 @@
         };
         sforce.opencti.enableClickToDial(args)
         */
+
+        // Call APEX Class to get
         args = {
             apexClass: 'GetUserInfo',
             methodName: 'getExtension',
@@ -602,34 +604,7 @@
                     credentialObj.identity_display_name = userExtension;
                     credentialObj.identity_impu = `sip:${userExtension}@rec1.qkonnect.io`;
                     authUser();
-                    let option = "";
-                    if(userExtension == "53106"){
-                        option = '<option value="">--Select Agent--</option><option value="53277">53277 - Agent 1</option>';
-                        option += '<option value="53316">53316 - Agent 2</option>';
-                        option += '<option value="53319">53319 - Agent 3</option>';
-                        option += '<option value="53320">53320 - Agent 4</option>';
-                    }else if(userExtension == "53227"){
-                        option = '<option value="">--Select Agent--</option><option value="53106">53106 - Agent 1</option>';
-                        option += '<option value="53316">53316 - Agent 2</option>';
-                        option += '<option value="53319">53319 - Agent 3</option>';
-                        option += '<option value="53320">53320 - Agent 4</option>';
-                    }else if(userExtension == "53316"){
-                        option = '<option value="">--Select Agent--</option><option value="53106">53106 - Agent 1</option>';
-                        option += '<option value="53277">53277 - Agent 2</option>';
-                        option += '<option value="53319">53319 - Agent 3</option>';
-                        option += '<option value="53320">53320 - Agent 4</option>';
-                    }else if(userExtension == "53319"){
-                        option = '<option value="">--Select Agent--</option><option value="53106">53106 - Agent 1</option>';
-                        option += '<option value="53316">53316 - Agent 2</option>';
-                        option += '<option value="53227">53227 - Agent 3</option>';
-                        option += '<option value="53320">53320 - Agent 4</option>';
-                    }else if(userExtension == "53320"){
-                        option = '<option value="">--Select Agent--</option><option value="53106">53106 - Agent 1</option>';
-                        option += '<option value="53316">53316 - Agent 2</option>';
-                        option += '<option value="53319">53319 - Agent 3</option>';
-                        option += '<option value="53227">53227 - Agent 4</option>';
-                    }
-                    document.querySelector("#agents-for-transfer").innerHTML = option;
+                    getUsers();
                     setTimeout(()=>{
                         sipRegister();
                     }, 2000);
@@ -640,6 +615,53 @@
         };
         // Call APEX Class to get
         sforce.opencti.runApex(args) 
+
+        function getUsers(){
+
+            args = {
+                apexClass: 'GetAllUsers',
+                methodName: 'getUsersHaveExtension',
+                methodParams: '',
+                callback: function(result) {
+                    if (result.success) {
+                        console.log('Result Users : ', result);
+                        const responseString = result.returnValue.runApex;
+
+                        const response = JSON.parse(responseString);
+
+                        if(response.status == 200){
+                            let option = '<option value="">--Select Agent--</option>';
+                            for(let item of response.users){
+                                option += '<option value="'+item.Extension+'">'+item.Extension+' - '+item.Name+'</option>'
+                            }
+                            document.querySelector("#agents-for-transfer").innerHTML = option;
+                        }
+                        /*
+                        const statusMatch = responseString.match(/status=(\d+)/);
+                        const status = statusMatch ? parseInt(statusMatch[1], 10) : null;
+
+                        if(status == 200){
+                            let usersPart = responseString.match(/users=\((.*)\)/)[1];
+
+                            usersPart = usersPart.replace(/User:\{/g, '{').replace(/\),/g, '},').replace(/\)$/g, '}');
+                
+                            const usersArray = JSON.parse(`[${usersPart}]`);
+
+                            let option = '<option value="">--Select Agent--</option>';
+                            for(let item of usersArray){
+                                option += '<option value="'+item.Extension+'">'+item.Extension+' - '+item.Name+'</option>'
+                            }
+                            document.querySelector("#agents-for-transfer").innerHTML = option;
+                        }
+                        */
+                    } else {
+                        console.log('ResultError Extension: ',result.errors);
+                    }
+                }
+            };
+            // Call APEX Class to get
+            sforce.opencti.runApex(args) 
+        }
         
 
         var urlParams = new URLSearchParams(window.location.search);
