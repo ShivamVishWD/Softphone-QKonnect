@@ -1415,6 +1415,12 @@
                     authUser("1", "0");
                 }, 2000);
             }
+
+            if(fromPlatform == 'salesforce' && callInitStatus == "Ringing"){
+                setTimeout(()=>{
+                    authUser("1", "0");
+                }, 2000);
+            }
         }
     
         function sipSendDTMF(c) {
