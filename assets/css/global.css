@@ -108,6 +108,25 @@
   align-items: center;
 }
 
+.dial-pad-wrap .left-pan .calling .call-connected-options .action-btn {
+  background-color: transparent;
+  border: 2px solid #000;
+  border-radius: 20%;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dial-pad-wrap .left-pan .calling .call-connected-options .action-btn img{
+  height: 20px;
+  width: 16px;
+}
+
+.dial-pad-wrap .left-pan .calling .call-connected-options .action-btn.active {
+  background-color: #fbfbfb;
+}
+
 .dial-pad-wrap .dispotition {
   padding: 20px 50px;
   min-height: 100vh;
@@ -206,8 +225,8 @@
 .dial-pad-wrap .left-pan .calling .action,
 .dial-pad-wrap .left-pan .calling .number {
   margin: auto;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .dial-pad-wrap .left-pan .calling .photo {
@@ -225,8 +244,8 @@
 }
 
 .dial-pad-wrap .left-pan .calling .name {
-  margin: 30px 0;
-  font-size: 24px;
+  margin: 10px 0;
+  font-size: 18px;
   font-weight: 400;
 }
 

@@ -119,8 +119,12 @@
                 <div class="name rubberBand animated" id="contact-name">Unknown</div>
                 <div class="number" id="contact-number"></div>
                 <div class="call-connected-options hide">
-                    <button class="hold-btn" id="hold-btn" onclick="handleHoldUnhold()">Hold</button>
-                    <button class="mute-btn" id="mute-btn" onclick="handleMuteUnmute()">Mute</button>
+                    <button class="hold-btn action-btn" id="hold-btn" onclick="sipToggleHoldResume()" disabled="true" title="Hold/Unhold">
+                        <img src="./assets/images/pause-call.png" alt="Call-Hold">
+                    </button>
+                    <button class="mute-btn action-btn" id="mute-btn" onclick="sipToggleMute()" disabled="true" title="Mute/Unmute">
+                        <img src="./assets/images/mute-microphone.png" alt="Call-Mute">
+                    </button>
                 </div>
                 <div class="call-end show bounceInUp animated">
                     <button type="button" class="btn btn-hangup" onclick="sipHangUp()"><img class="hangup-icon" src="assets/images/phone.png"/></button>
@@ -698,29 +702,6 @@
             }
         }
 
-        function handleMuteUnmute(){
-            const btnValue = document.getElementById("mute-btn").innerText;
-            console.log(btnValue, 'mute btn value')
-            if(btnValue == "Mute"){
-                document.getElementById("mute-btn").innerText = "Unmute"
-            }else if(btnValue == "Unmute"){
-                document.getElementById("mute-btn").innerText = "Mute";
-            }
-            sipToggleMute();
-        }
-
-        function handleHoldUnhold(){
-            const btnValue = document.getElementById("hold-btn").innerText;
-            console.log(btnValue, 'hold btn value')
-            if(btnValue == "Hold"){
-                document.querySelector(".title").innerHTML = "On Hold";
-                document.getElementById("hold-btn").innerText = "Unhold"
-            }else if(btnValue == "Unhold"){
-                document.querySelector(".title").innerHTML = "Connected";
-                document.getElementById("hold-btn").innerText = "hold";
-            }
-            sipToggleHoldResume();
-        }
     </script>
     <script src="https://quadraforttechnologies-4c-dev-ed.lightning.force.com/support/api/56.0/interaction.js" type="text/javascript"></script>
     <script src="https://quadraforttechnologies-4c-dev-ed.lightning.force.com/support/api/56.0/lightning/opencti_min.js" type="text/javascript"></script>
@@ -1359,6 +1340,11 @@
                 var i_ret;
                 var bMute = !oSipSessionCall.bMute;
                 console.log('bMute : ',bMute);
+                if(bMute){
+                    document.querySelector(".mute-btn").classList.add('active');
+                }else{
+                    document.querySelector(".mute-btn").classList.remove('active');
+                }
                 // txtCallStatus.innerHTML = bMute ? '<i>Mute the call...</i>' : '<i>Unmute the call...</i>';
                 i_ret = oSipSessionCall.mute('audio'/*could be 'video'*/, bMute);
                 if (i_ret != 0) {
@@ -1414,7 +1400,10 @@
             $(".calling .name").html("Unknown");
             $(".calling .number").html("");
 
+            document.querySelector(".call-connected-options").classList.remove("show");
             document.querySelector(".call-connected-options").classList.add("hide");
+            document.querySelector("#hold-btn").disabled = true;
+            document.querySelector("#mute-btn").disabled = true;
         }
     
         function sipSendDTMF(c) {
@@ -1830,7 +1819,10 @@
                         if(e.type == "connected"){
                             callInitStatus = "Connected"; 
                             document.querySelector(".title").innerHTML = "Connected";
+                            document.querySelector(".call-connected-options").classList.remove("hide");
                             document.querySelector(".call-connected-options").classList.add("show");
+                            document.querySelector("#hold-btn").disabled = false;
+                            document.querySelector("#mute-btn").disabled = false;
                         }
                         args = {
                             callback: function(result) {
@@ -1978,6 +1970,8 @@
                             txtCallStatus.innerHTML = '<i>Call placed on hold</i>';
                             oSipSessionCall.bHeld = true;
                             */
+                            document.querySelector(".title").innerHTML = "On Hold";
+                            document.getElementById('hold-btn').classList.add('active');
                         }
                         break;
                     }
@@ -1991,6 +1985,8 @@
                             txtCallStatus.innerHTML = '<i>Failed to place remote party on hold</i>';
                             */
                         }
+                        document.querySelector(".title").innerHTML = "Failed to place remote party on hold";
+                        document.getElementById('hold-btn').classList.remove('active');
                         break;
                     }
                 case 'm_local_resume_ok':
@@ -2002,6 +1998,8 @@
                             btnHoldResume.disabled = false;
                             txtCallStatus.innerHTML = '<i>Call taken off hold</i>';
                             */
+                            document.querySelector(".title").innerHTML = "Connected";
+                            document.getElementById('hold-btn').classList.remove('active');
                             oSipSessionCall.bHeld = false;
     
                             if (SIPml.isWebRtc4AllSupported()) { // IE don't provide stream callback yet
@@ -2019,6 +2017,7 @@
                             btnHoldResume.disabled = false;
                             txtCallStatus.innerHTML = '<i>Failed to unhold call</i>';
                             */
+                            document.querySelector(".title").innerHTML = "Failed to unhold call";
                         }
                         break;
                     }
@@ -2029,6 +2028,8 @@
                             /*
                             txtCallStatus.innerHTML = '<i>Placed on hold by remote party</i>';
                             */
+                            document.querySelector(".title").innerHTML = "Placed on hold by remote party";
+                            document.getElementById('hold-btn').classList.add('active');
                         }
                         break;
                     }
@@ -2036,7 +2037,8 @@
                     {
                         if (e.session == oSipSessionCall) {
                             document.querySelector(".title").innerHTML = "Connected";
-                            txtCallStatus.innerHTML = '<i>Taken off hold by remote party</i>';
+                            document.getElementById('hold-btn').classList.remove('active');
+                            // txtCallStatus.innerHTML = '<i>Taken off hold by remote party</i>';
                         }
                         break;
                     }
@@ -2108,7 +2110,7 @@
                         if (e.session == oSipSessionCall) {
                             var s_message = "Do you accept call transfer to [" + e.getTransferDestinationFriendlyName() + "]?";//FIXME
                             if (confirm(s_message)) {
-                                txtCallStatus.innerHTML = "<i>Call transfer in progress...</i>";
+                                // txtCallStatus.innerHTML = "<i>Call transfer in progress...</i>";
                                 oSipSessionCall.acceptTransfer();
                                 break;
                             }
