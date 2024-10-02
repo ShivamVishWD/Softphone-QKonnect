@@ -350,6 +350,11 @@
         var hasApiKey = urlParams.has('apikey') && urlParams.get('apikey').trim() !== '';
         var hasExtension = urlParams.has('extension') && urlParams.get('extension').trim() !== '';
 
+        var fromPlatform = "qkonnect";
+        if(!hasExtension){
+            fromPlatform = "salesforce";
+        }
+
         if(hasApiKey && hasExtension && userExtension != null && userAPIKey != null){
             checkProviders(userExtension, userAPIKey);
         }
@@ -1404,6 +1409,12 @@
             document.querySelector(".call-connected-options").classList.add("hide");
             document.querySelector("#hold-btn").disabled = true;
             document.querySelector("#mute-btn").disabled = true;
+
+            if(fromPlatform == 'qkonnect'){
+                setTimeout(()=>{
+                    authUser("1", "0");
+                }, 2000);
+            }
         }
     
         function sipSendDTMF(c) {
