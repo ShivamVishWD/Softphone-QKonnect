@@ -647,9 +647,10 @@ tmedia_session_jsep01.prototype.__get_lo = function () {
             // stun.l.google.com: 173.194.78.127
             // stun.counterpath.net: 216.93.246.18
             // "23.21.150.121" is the default STUN server used in Nightly
-            o_iceServers = tmedia_session_jsep01.mozThis
-                ? [{ url: 'stun:23.21.150.121:3478' }, { url: 'stun:216.93.246.18:3478' }, { url: 'stun:66.228.45.110:3478' }, { url: 'stun:173.194.78.127:19302' }]
-                : [{ url: 'stun:stun.l.google.com:19302' }, { url: 'stun:stun.counterpath.net:3478' }, { url: 'stun:numb.viagenie.ca:3478' }];
+            // o_iceServers = tmedia_session_jsep01.mozThis
+            //     ? [{ url: 'stun:23.21.150.121:3478' }, { url: 'stun:216.93.246.18:3478' }, { url: 'stun:66.228.45.110:3478' }, { url: 'stun:173.194.78.127:19302' }]
+            //     : [{ url: 'stun:stun.l.google.com:19302' }, { url: 'stun:stun.counterpath.net:3478' }, { url: 'stun:numb.viagenie.ca:3478' }];
+            o_iceServers = [{ url: 'stun:stun.l.google.com:19302' }];
         }
         try { tsk_utils_log_info("ICE servers:" + JSON.stringify(o_iceServers)); } catch (e) { }
         this.o_pc = new window.RTCPeerConnection(

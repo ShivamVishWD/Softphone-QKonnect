@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Phone View</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -98,6 +98,18 @@
         </table>
     </div>
     <div class="dial-pad-wrap">
+        <div id="loading" class="loading show">
+            <center>
+                <p>Loading...</p>
+            </center>
+        </div>
+    
+        <div id="unable-to-connect" class="unable-to-connect hide">
+            <center>
+                <p id="unable-connect-text">Unable to connect. Please check your network or try again later.</p>
+                <button onclick="retryConnection()" class="btn btn-primary">Retry</button>
+            </center>
+        </div>
         <div class="left-pan">
             <div class="calling">
                 <div class="title fadeIn animated infinite">Calling</div>
@@ -113,23 +125,28 @@
                     <button type="button" class="btn btn-danger btn-xl btn-round" id="reject-call"><img src="assets/images/end-call.png" style="height: 20px; width: 20px"/></button>
                     <button type="button" class="btn btn-success btn-xl btn-round" id="pick-call"><img src="assets/images/call.png" style="height: 20px; width: 20px"/></button>
                 </div>
-                <div class="dialpad-call" style="margin-top: 10px;">
-                    <!-- <table>
-                        <tr><td><input type="button" class="btn" value="1" onclick="sipSendDTMF('1');" /><input type="button" class="btn" value="2" onclick="sipSendDTMF('2');" /><input type="button" class="btn" value="3" onclick="sipSendDTMF('3');" /></td></tr>
-                        <tr><td><input type="button" class="btn" value="4" onclick="sipSendDTMF('4');" /><input type="button" class="btn" value="5" onclick="sipSendDTMF('5');" /><input type="button" class="btn" value="6" onclick="sipSendDTMF('6');" /></td></tr>
-                        <tr><td><input type="button" class="btn" value="7" onclick="sipSendDTMF('7');" /><input type="button" class="btn" value="8" onclick="sipSendDTMF('8');" /><input type="button" class="btn" value="9" onclick="sipSendDTMF('9');" /></td></tr>
-                        <tr><td><input type="button" class="btn" value="*" onclick="sipSendDTMF('*');" /><input type="button" class="btn" value="0" onclick="sipSendDTMF('0');" /><input type="button" class="btn" value="#" onclick="sipSendDTMF('#');" /></td></tr>
-                    </table> -->
-                    <label>Select Agent for Call Transfer</label>
-                    <select name="agents-for-transfer" id="agents-for-transfer">
-                        <option value="">--Select Agent</option>
-                    </select>
-                    <button type="button" onclick="callTransfer()">Transfer</button>
-                    <button onclick="newCase()">New Case</button>
+                <div style="margin-top: 10px;">
+                    <button onclick="showCallDivert('transfer')">Call Transfer</button>
+                    <button onclick="showCallDivert('conferance')">Call Conferance</button>
                 </div>
+                <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
+                    <label style="margin-bottom: 5px;">Select Agent for Call Transfer</label>
+                    <select name="agents-for-transfer" id="agents-for-transfer">
+                        <option value="">--Select Agent--</option>
+                    </select>
+                    <button type="button" onclick="callTransfer('transfer')" style="margin-top: 8px;">Transfer</button>
+                </div>
+                <div class="dialpad-call" id="call-conferance-section" style="margin-top: 10px; display: none;">
+                    <label style="margin-bottom: 5px;">Select Agents for Conferance</label>
+                    <select name="agents-for-conferance" id="agents-for-conferance" multiple>
+                        <option value="">--Select Agent--</option>
+                    </select>
+                    <button type="button" onclick="callTransfer('conferance')" style="margin-top: 8px;">Conferance</button>
+                </div>
+                <button onclick="newCase()" id="new-case-btn" style="margin-top: 10px;">New Case</button>
             </div>
         </div>
-        <div class="dial-pad show">
+        <div class="dial-pad hide">
             <center><p id="alert-msg">Waiting for connection</p></center>
             <div class="agent-connect-status">
                 <select name="agent-status" id="agent-status" class="form-select" onchange="handleAgentStatus()">
@@ -247,6 +264,9 @@
                     <label for="call-was" class="form-label">Call was</label>
                     <select class="form-select" id="call-was" onchange="handleSelectChange()">
                         <option value="Partial Response">Partial Response</option>
+                        <option value="Not Reachable">Not Reachable</option>
+                        <option value="Busy">Busy</option>
+                        <option value="Call Transferred">Call Transferred</option>
                         <option value="Callback">Callback</option>
                         <option value="Other">Other</option>
                     </select>
@@ -279,26 +299,14 @@
     <script type="text/javascript" src="assets/js/dialer.js"></script>
     <script src="SIPml-api.js?svn=252" type="text/javascript"></script>
     <script type="text/javascript">
-        var userExtension = '53106';
-        var callInitStatus = "Nothing";
-        var userAPIKey = "f935e008-0d27-11ef-a03c-6045bdaaffcb";
-
-        var urlParams = new URLSearchParams(window.location.search);
-        console.log("urlParams : ",urlParams);
-        var getApiKey = urlParams.get('apikey');
-        console.log("getApiKey : ",getApiKey);
-        if(getApiKey && getApiKey != null && getApiKey != undefined && getApiKey != ''){
-            userAPIKey = getApiKey;
-        }
-
         var credentialObj = {
             expert_disable_video: 'false',
             identity_password: 'rec%20@24!23',
-            expert_websocket_server_url: 'wss://rec1.qkonnect.io:7443',
+            expert_websocket_server_url: 'wss://rec3.qkonnect.io:7443',
             identity_impi: userExtension,
             expert_sip_outboundproxy_url: '',
-            // identity_impu: 'sip:53106@rec1.qkonnect.io',
-            identity_impu: `sip:${userExtension}@rec1.qkonnect.io`,
+            // identity_impu: 'sip:53106@rec3.qkonnect.io',
+            identity_impu: `sip:${userExtension}@rec3.qkonnect.io`,
             identity_display_name: userExtension,
             expert_disable_early_ims: 'false',
             expert_video_size: '',
@@ -311,16 +319,104 @@
             expert_disable_debug: 'false',
         };
 
+        var userExtension = null;
+        var callInitStatus = "Nothing";
+        var userAPIKey = null;
+
+        var urlParams = new URLSearchParams(window.location.search);
+        console.log("urlParams : ",urlParams);
+        var getApiKey = urlParams.get('apikey');
+        console.log("getApiKey : ",getApiKey);
+        if(getApiKey && getApiKey != null && getApiKey != undefined && getApiKey != ''){
+            userAPIKey = getApiKey.trim();
+        }
+
+        var getExtension = urlParams.get('extension');
+        console.log('getExtension : ',getExtension);
+        if(getExtension && getExtension != null && getExtension != ''){
+            userExtension = getExtension.trim();
+        }
+
+        var hasApiKey = urlParams.has('apikey') && urlParams.get('apikey').trim() !== '';
+        var hasExtension = urlParams.has('extension') && urlParams.get('extension').trim() !== '';
+
+        if(hasApiKey && hasExtension && userExtension != null && userAPIKey != null){
+            checkProviders(userExtension, userAPIKey);
+        }else if(!hasApiKey || !hasExtension){
+            document.querySelector(".loading").classList.add('hide');
+            document.querySelector(".unable-to-connect").classList.add('show');
+        }
+
+        async function checkProviders(extension, apikey, from='qkonnect'){
+            try{
+
+                if(extension == "" || apikey == ""){
+                    document.querySelector(".loading").classList.add('hide');
+                    document.querySelector(".unable-to-connect").classList.add('show');
+                }
+
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                const raw = JSON.stringify({
+                "api_key": apikey,
+                "extension": extension
+                });
+
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+                };
+
+                fetch("https://qkonnect.io/api/aashirwadSalesforceGetAgentStatus.php", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('provider result :',result)
+                    if(result.status == '200'){
+                        document.querySelector(".loading").classList.add('hide')
+                        document.querySelector(".dial-pad").classList.add('show')
+                        credentialObj.identity_impi = extension;
+                        credentialObj.identity_display_name = extension;
+                        credentialObj.identity_impu = `sip:${extension}@rec3.qkonnect.io`;
+                        if(from == 'qkonnect'){
+                            document.querySelector("#new-case-btn").style.display = 'none';
+                        }
+                        setTimeout(()=>{
+                            sipRegister();
+                            getUsers();
+                        }, 2000);
+                    }else{
+                        document.querySelector(".loading").classList.add('hide');
+                        document.querySelector(".unable-to-connect").classList.add('show');
+                        //document.querySelector('#unable-connect-text').innerHTML = "Unable to connect -> "+result.message;
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    document.querySelector(".loading").classList.add('hide');
+                    document.querySelector(".unable-to-connect").classList.add('show');
+                    //document.querySelector('#unable-connect-text').innerHTML = "Unable to connect "+error;
+                });
+            }catch(error){
+                console.log("Error Providers : ",error);
+            }
+        }
+
         var idOfObject = '';
 
-        async function authUser(){
+        async function authUser(agentStatus = "0", agentCallStatus = "0"){
             try{
+                let status = document.getElementById("agent-status").value;
                 const obj={
                     "api_key": userAPIKey,
                     "extension": userExtension,
-                    "crm_status": "1",
-                    "crm_status_reason": ""
+                    "crm_status": agentStatus,
+                    "agent_call_status": agentCallStatus,
+                    "crm_status_reason": agentStatus == "0" ? status : "",
                 }
+                console.log("Agent Status Log Object : ",obj);
                 let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus.php", {
                     method: "POST",
                     Headers: {
@@ -332,8 +428,25 @@
                     body: JSON.stringify(obj)
                 })
 
-                response = await response.text();
+                response = await response.json();
                 console.log("response api : ",response)
+
+                const params = {Status__c: agentStatus == "1" ? "Online" : "Offline", Log_Description__c: ""};
+
+                args = {
+                    apexClass: 'AgentsActivity',
+                    methodName: 'logAgentStatus',
+                    methodParams: `body=${JSON.stringify(params)}`,
+                    callback: function(result) {
+                        if (result.success) {
+                            console.log('Result Agent Log: ',result);
+                        } else {
+                            console.log('ResultError Agent Status: ',result.errors);
+                        }
+                    }
+                };
+                // Call APEX Class to get
+                sforce.opencti.runApex(args) 
             }catch(error){
                 console.log("catch error : ",error)
             }
@@ -415,41 +528,14 @@
 
         async function handleAgentStatus(){
             let status = document.getElementById("agent-status").value;
-            let crmStatus = '1';
-            if(status != "Online"){
-                crmStatus = "0";
-            }
 
-            try{
-                const obj={
-                    "api_key": userAPIKey,
-                    "extension": userExtension,
-                    "crm_status": crmStatus,
-                    "crm_status_reason": status != "Online" ? status : ""
-                }
-                let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus.php", {
-                    method: "POST",
-                    Headers: {
-                        "Accept": '*/*',
-                        'Content-Type': 'application/json',
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers":"X-Requested-With"
-                    },
-                    body: JSON.stringify(obj)
-                })
-
-                response = await response.text();
-                console.log("response handle status api : ",response)
-
-                if(status == "Online"){
-                    console.log('sipRegister called');
-                    sipRegister();
-                }else{
-                    console.log('sipUnRegister called');
-                    sipUnRegister();
-                }
-            }catch(error){
-                console.log("catch error : ",error)
+            if(status == "Online"){
+                console.log('sipRegister called');
+                callInitStatus = "Nothing";
+                sipRegister();
+            }else{
+                console.log('sipUnRegister called');
+                sipUnRegister();
             }
         }
 
@@ -578,6 +664,17 @@
             }
             
         }
+
+        function showCallDivert(showType){
+            console.log(showType, 'show type')
+            if(showType == 'transfer'){
+                document.querySelector("#call-conferance-section").style.display = "none";
+                document.querySelector("#call-transfer-section").style.display = "block";
+            }else if(showType == 'conferance'){
+                document.querySelector("#call-transfer-section").style.display = "none";
+                document.querySelector("#call-conferance-section").style.display = "block";
+            }
+        }
     </script>
     <script src="https://quadraforttechnologies-4c-dev-ed.lightning.force.com/support/api/56.0/interaction.js" type="text/javascript"></script>
     <script src="https://quadraforttechnologies-4c-dev-ed.lightning.force.com/support/api/56.0/lightning/opencti_min.js" type="text/javascript"></script>
@@ -590,8 +687,6 @@
         };
         sforce.opencti.enableClickToDial(args)
         */
-
-        // Call APEX Class to get
         args = {
             apexClass: 'GetUserInfo',
             methodName: 'getExtension',
@@ -600,14 +695,18 @@
                 if (result.success) {
                     console.log('Result Extension: ',result);
                     userExtension = result.returnValue.runApex;
+                    userExtension = userExtension != null ? userExtension.trim() : '';
+                    checkProviders(userExtension, userAPIKey, 'salesforce');
+                    /*
                     credentialObj.identity_impi = userExtension;
                     credentialObj.identity_display_name = userExtension;
-                    credentialObj.identity_impu = `sip:${userExtension}@rec1.qkonnect.io`;
-                    authUser();
+                    credentialObj.identity_impu = `sip:${userExtension}@rec3.qkonnect.io`;
+                    //authUser();
                     getUsers();
                     setTimeout(()=>{
                         sipRegister();
                     }, 2000);
+                    */
                 } else {
                     console.log('ResultError Extension: ',result.errors);
                 }
@@ -616,68 +715,90 @@
         // Call APEX Class to get
         sforce.opencti.runApex(args) 
 
-        function getUsers(){
 
-            args = {
-                apexClass: 'GetAllUsers',
-                methodName: 'getUsersHaveExtension',
-                methodParams: '',
-                callback: function(result) {
-                    if (result.success) {
-                        console.log('Result Users : ', result);
-                        const responseString = result.returnValue.runApex;
+        async function getUsers(){
 
-                        const response = JSON.parse(responseString);
-
-                        if(response.status == 200){
-                            let option = '<option value="">--Select Agent--</option>';
-                            for(let item of response.users){
-                                option += '<option value="'+item.Extension+'">'+item.Extension+' - '+item.Name+'</option>'
-                            }
-                            document.querySelector("#agents-for-transfer").innerHTML = option;
-                        }
-                        /*
-                        const statusMatch = responseString.match(/status=(\d+)/);
-                        const status = statusMatch ? parseInt(statusMatch[1], 10) : null;
-
-                        if(status == 200){
-                            let usersPart = responseString.match(/users=\((.*)\)/)[1];
-
-                            usersPart = usersPart.replace(/User:\{/g, '{').replace(/\),/g, '},').replace(/\)$/g, '}');
+            if(getExtension && getExtension != null && getExtension != ''){
                 
-                            const usersArray = JSON.parse(`[${usersPart}]`);
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
 
-                            let option = '<option value="">--Select Agent--</option>';
-                            for(let item of usersArray){
-                                option += '<option value="'+item.Extension+'">'+item.Extension+' - '+item.Name+'</option>'
+                const raw = JSON.stringify({
+                    "api_key": userAPIKey
+                });
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow",
+                };
+
+                fetch("https://qkonnect.io/api/getActiveAgentList.php", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log(result, "extension api response")
+                    if(result.status == "200" && result.active_agent_list.length > 0){
+                        let option = '<option value="">--Select Agent--</option>';
+                        for(let item of result.active_agent_list){
+                            if(String(item.extension) != String(userExtension)){
+                                option += '<option value="'+item.extension+'">'+item.extension+' - '+item.agent_name+'</option>'
                             }
-                            document.querySelector("#agents-for-transfer").innerHTML = option;
                         }
-                        */
-                    } else {
-                        console.log('ResultError Extension: ',result.errors);
+                        document.querySelector("#agents-for-transfer").innerHTML = option;
+                        document.querySelector('#agents-for-conferance').innerHTML = option;
                     }
-                }
-            };
-            // Call APEX Class to get
-            sforce.opencti.runApex(args) 
+                })
+                .catch((error) => console.error(error));
+            }else{
+
+                args = {
+                    apexClass: 'GetAllUsers',
+                    methodName: 'getUsersHaveExtension',
+                    methodParams: '',
+                    callback: function(result) {
+                        if (result.success) {
+                            console.log('Result Users : ', result);
+                            const responseString = result.returnValue.runApex;
+
+                            const response = JSON.parse(responseString);
+
+                            if(response.status == 200){
+                                let option = '<option value="">--Select Agent--</option>';
+                                for(let item of response.users){
+                                    option += '<option value="'+item.Extension+'">'+item.Extension+' - '+item.Name+'</option>'
+                                }
+                                document.querySelector("#agents-for-transfer").innerHTML = option;
+                                document.querySelector('#agents-for-conferance').innerHTML = option;
+                            }
+                        } else {
+                            console.log('ResultError Extension: ',result.errors);
+                        }
+                    }
+                };
+                // Call APEX Class to get
+                sforce.opencti.runApex(args) 
+            }
         }
         
-
+        /*
         var urlParams = new URLSearchParams(window.location.search);
         console.log("urlParams : ",urlParams)
         var getExtension = urlParams.get('extension');
 
         if(getExtension && getExtension != null && getExtension != ''){
+            userExtension = getExtension;
             credentialObj.identity_impi = getExtension;
             credentialObj.identity_display_name = getExtension;
-            credentialObj.identity_impu = `sip:${getExtension}@rec1.qkonnect.io`;
-            document.querySelector(".dialpad-call").style.display = 'none';
-            authUser();
+            credentialObj.identity_impu = `sip:${getExtension}@rec3.qkonnect.io`;
+            document.querySelector("#new-case-btn").style.display = 'none';
+            // authUser();
+            getUsers();
             setTimeout(()=>{
                 sipRegister();
             }, 2000);
         }
+        */
         
         args = {
             listener: function(result) {
@@ -1008,7 +1129,7 @@
                 if (!o_impu || !o_impu.s_user_name || !o_impu.s_host) {
                     // txtRegStatus.innerHTML = "<b>[" + txtPublicIdentity.value + "] is not a valid Public identity</b>";
                     // btnRegister.disabled = false;
-                    //console.log('sip:53106@rec1.qkonnect.io is not a valid Public identity')
+                    //console.log('sip:53106@rec3.qkonnect.io is not a valid Public identity')
                     return;
                 }
     
@@ -1044,15 +1165,18 @@
                             { name: 'Organization', value: 'Doubango Telecom' }
                     ]
                 });
+                
                 if (oSipStack.start() != 0) {
                     // txtRegStatus.innerHTML = '<b>Failed to start the SIP stack</b>';
                     console.log('Failed to start the SIP stack')
                 }
+                /*
                 else {
                     document.getElementById("alert-msg").innerText = "Connected";
                     document.getElementById("alert-msg").style.color = "green";
                     return;
                 }
+                */
             }
             catch (e) {
                 // txtRegStatus.innerHTML = "<b>2:" + e + "</b>";
@@ -1063,8 +1187,7 @@
     
         // sends SIP REGISTER (expires=0) to logout
         function sipUnRegister() {
-            document.getElementById("alert-msg").innerText = "Not Connected";
-            document.getElementById("alert-msg").style.color = "red";
+            
             if (oSipStack) {
                 oSipStack.stop(); // shutdown all sessions
             }
@@ -1208,8 +1331,8 @@
             }
 
             if(callInitStatus == "Connected"){
-                callInitStatus = "Nothing";
-                document.querySelector(".title").innerHTML = "Disconnected";
+                callInitStatus = "Call";
+                document.querySelector(".title").innerHTML = "Calling";
                 document.querySelector(".dial-pad").classList.remove("show")
                 document.querySelector(".dial-pad").classList.add("hide")
 
@@ -1217,8 +1340,8 @@
                 document.querySelector(".dispotition").classList.remove("hide")
 
             }else if(callInitStatus == "Ringing"){
-                callInitStatus = "Nothing";
-                document.querySelector(".title").innerHTML = "Disconnected";
+                callInitStatus = "Call";
+                document.querySelector(".title").innerHTML = "Calling";
                 document.querySelector(".dial-pad").classList.add("show")
                 document.querySelector(".dial-pad").classList.remove("hide")
 
@@ -1242,6 +1365,8 @@
             $(".calling").fadeOut(100);
             $(".calling .name").html("Unknown");
             $(".calling .number").html("");
+
+            authUser("1", "0");
         }
     
         function sipSendDTMF(c) {
@@ -1480,6 +1605,7 @@
         // Callback function for SIP Stacks
         function onSipEventStack(e /*SIPml.Stack.Event*/) {
             tsk_utils_log_info('==stack event = ' + e.type);
+
             switch (e.type) {
                 case 'started':
                     {
@@ -1487,7 +1613,7 @@
                         try {
                             // LogIn (REGISTER) as soon as the stack finish starting
                             oSipSessionRegister = this.newSession('register', {
-                                expires: 200,
+                                expires: 3600,
                                 events_listener: { events: '*', listener: onSipEventSession },
                                 sip_caps: [
                                             { name: '+g.oma.sip-im', value: null },
@@ -1519,6 +1645,12 @@
                         uiVideoDisplayShowHide(false);
                         if(e.type == 'failed_to_start')
                             sipRegister();
+
+                        if(e.type == "stopped"){
+                            document.getElementById("alert-msg").innerText = "Not Connected";
+                            document.getElementById("alert-msg").style.color = "red";
+                            authUser("0", "0");
+                        }
                         // divCallOptions.style.opacity = 0;
     
                         // txtCallStatus.innerHTML = '';
@@ -1543,7 +1675,7 @@
                             // btnHangUp.disabled = false;
     
                             startRingTone();
-                           
+
                             var sRemoteNumber = (oSipSessionCall.getRemoteFriendlyName() || 'unknown');
                             console.log('sRemoteNumber Incoming call from : ',sRemoteNumber)
                             //txtCallStatus.innerHTML = "<i>Incoming call from [<b>" + sRemoteNumber + "</b>]</i>";
@@ -1589,6 +1721,8 @@
                             
                             callRecieveBtns.classList.add("show")
                             callRecieveBtns.classList.remove("hide")
+
+                            authUser("1", "1");
     
                             DialPad.call();
                             args = {
@@ -1636,12 +1770,17 @@
         // Callback function for SIP sessions (INVITE, REGISTER, MESSAGE...)
         function onSipEventSession(e /* SIPml.Session.Event */) {
             tsk_utils_log_info('==session event = ' + e.type);
-    
+
             switch (e.type) {
                 case 'connecting': case 'connected':
                     {
-                        callInitStatus = "Connected";
+                        if(callInitStatus == "Nothing" && e.type == "connected"){
+                            document.getElementById("alert-msg").innerText = "Connected";
+                            document.getElementById("alert-msg").style.color = "green";
+                            authUser("1", "0");
+                        }
                         if(e.type == "connected"){
+                            callInitStatus = "Connected"; 
                             document.querySelector(".title").innerHTML = "Connected";
                         }
                         args = {
@@ -1684,6 +1823,12 @@
                     } // 'connecting' | 'connected'
                 case 'terminating': case 'terminated':
                     {
+                        console.log(callInitStatus, 'call intiate status')
+                        if(callInitStatus == "Nothing" && e.type == "terminated"){
+                            document.getElementById("alert-msg").innerText = "Not Connected";
+                            document.getElementById("alert-msg").style.color = "red";
+                            authUser("0", "0");
+                        }
                         if (e.session == oSipSessionRegister) {
                             // uiOnConnectionEvent(false, false);
     
@@ -1694,9 +1839,9 @@
                         }
                         else if (e.session == oSipSessionCall) {
                             uiCallTerminated(e.description);
+                            sipHangUp();
                         }
     
-                        sipHangUp();
                         break;
                     } // 'terminating' | 'terminated'
     
@@ -1752,6 +1897,7 @@
                                 // txtCallStatus.innerHTML = '<i>Remote ringing...</i>';
                                 console.log("Remote ringing...")
                                 callInitStatus = "Ringing";
+                                authUser("1", "1");
                             }
                         }
                         break;
@@ -1953,31 +2099,50 @@
             sipCall('call-audio', phoneNumber)
         })
 
-        async function callTransfer(){
+        function getSelectedAgents() {
+            // Get the select element
+            var selectElement = document.getElementById("agents-for-conferance");
+            
+            // Create an empty array to hold selected values
+            var selectedAgents = [];
+            
+            // Loop through the options in the select element
+            for (var i = 0; i < selectElement.options.length; i++) {
+                // If the option is selected, push its value to the array
+                if (selectElement.options[i].selected) {
+                    selectedAgents.push(selectElement.options[i].value);
+                }
+            }
+            
+            // Return or log the array of selected agents
+            return selectedAgents;
+        }
+
+        async function callTransfer(transferType){
             try{
-                const transferAgentElem = document.getElementById("agents-for-transfer");
-                const toExtension = transferAgentElem.value;
-                /*
-                const data = {
-                    api_key: userAPIKey,
-                    fromnumber: userExtension,
-                    destnumber: toExtension,
-                };
-                console.log("data : ",data);
-                let response = await fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", {
-                    method: "POST",
-                    Headers: {
-                        
-                        'Content-Type': 'application/json',
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers":"X-Requested-With"
-                    },
-                    body: JSON.stringify(data)
-                })
-                console.log('response call transfer before : ',response);
-                response = await response.json();
-                console.log("response call transfer api : ",response);
-                */
+                console.log('type : ',transferType)
+                let toExtension;
+                if(transferType == 'transfer'){
+                    const transferAgentElem = document.getElementById("agents-for-transfer");
+                    toExtension = transferAgentElem.value;
+                }else if(transferType == 'conferance'){
+                    toExtension = getSelectedAgents();
+                }
+
+                if(transferType == 'conferance'){
+                    toExtension = toExtension.filter((ext) => { return ext != "" });
+                }
+
+                console.log("toExtension : ",toExtension);
+
+                if(transferType == 'transfer' && toExtension == ''){
+                    alert("Please select an agent to transfer this call");
+                    return;
+                }else if(transferType == 'conferance' && toExtension.length == 0){
+                    alert("Please select at least one agent to conferance this call");
+                    return;
+                }
+
                 const data = JSON.stringify({
                     "api_key": userAPIKey,
                     "fromnumber": userExtension,
@@ -1997,8 +2162,13 @@
                 };
 
                 fetch("https://qkonnect.io/api/ashirwaadSalesforceIncallTransfer.php", requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result, "Call Transfer Response"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log(result, "Call Transfer Response")
+                    if(result.status_code == 200){
+                        authUser("1", "0");
+                    }
+                })
                 .catch((error) => console.error(error));
             }catch(error){
                 console.log("catch error : ",error)

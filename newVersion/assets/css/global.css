@@ -36,6 +36,43 @@
   box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
+.dial-pad-wrap .loading.show {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dial-pad-wrap .loading p {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1;
+}
+
+.dial-pad-wrap .loading.hide {
+  height: 0;
+  display: none;
+}
+
+.dial-pad-wrap .unable-to-connect.hide {
+  height: 0;
+  display: none;
+}
+
+.dial-pad-wrap .unable-to-connect.show {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dial-pad-wrap .unable-to-connect p{
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1;
+}
+
 .dial-pad-wrap .left-pan,
 .dial-pad-wrap .dial-pad {
   padding: 15px;
