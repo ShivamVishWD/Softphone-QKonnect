@@ -406,9 +406,14 @@
                         document.querySelector(".loading").classList.add('hide')
                         document.querySelector(".unable-to-connect").classList.add('hide');
                         document.querySelector(".dial-pad").classList.add('show')
+                        document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
                     }else{
                         document.querySelector(".loading").classList.add('hide');
-                        document.querySelector(".unable-to-connect").classList.add('show');
+                        document.querySelector(".unable-to-connect").classList.add('hide');
+                        document.querySelector(".dial-pad").classList.add('show');
+                        document.getElementById("alert-msg").innerText = "Unable to connect";
+                        document.getElementById("alert-msg").style.color = "red";
+                        document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
                         //document.querySelector('#unable-connect-text').innerHTML = "Unable to connect -> "+result.message;
                     }
                 })
