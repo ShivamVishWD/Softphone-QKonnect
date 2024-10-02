@@ -382,6 +382,7 @@
                     console.log('provider result :',result)
                     if(result.status == '200' && result.agent_call_status == "0"){
                         document.querySelector(".loading").classList.add('hide')
+                        document.querySelector(".unable-to-connect").classList.add('hide');
                         document.querySelector(".dial-pad").classList.add('show')
                         credentialObj.identity_impi = extension;
                         credentialObj.identity_display_name = extension;
