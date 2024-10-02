@@ -98,6 +98,16 @@
   position: relative;
 }
 
+.dial-pad-wrap .left-pan .calling .call-connected-options.hide{
+  display: none;
+}
+
+.dial-pad-wrap .left-pan .calling .call-connected-options.show{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 .dial-pad-wrap .dispotition {
   padding: 20px 50px;
   min-height: 100vh;
