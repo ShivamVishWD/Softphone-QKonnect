@@ -394,6 +394,9 @@
                     }else if(result.status == '200' && result.agent_call_status == "1"){
                         document.getElementById("alert-msg").innerText = "Already connected on another panel";
                         document.getElementById("alert-msg").style.color = "gold";
+                        document.querySelector(".loading").classList.add('hide')
+                        document.querySelector(".unable-to-connect").classList.add('hide');
+                        document.querySelector(".dial-pad").classList.add('show')
                     }else{
                         document.querySelector(".loading").classList.add('hide');
                         document.querySelector(".unable-to-connect").classList.add('show');
