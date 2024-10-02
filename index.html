@@ -348,9 +348,6 @@
 
         if(hasApiKey && hasExtension && userExtension != null && userAPIKey != null){
             checkProviders(userExtension, userAPIKey);
-        }else if(!hasApiKey || !hasExtension){
-            document.querySelector(".loading").classList.add('hide');
-            document.querySelector(".unable-to-connect").classList.add('show');
         }
 
         async function checkProviders(extension, apikey, from='qkonnect'){
