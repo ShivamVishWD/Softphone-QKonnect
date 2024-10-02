@@ -1414,18 +1414,6 @@
             document.querySelector(".call-connected-options").classList.add("hide");
             document.querySelector("#hold-btn").disabled = true;
             document.querySelector("#mute-btn").disabled = true;
-
-            if(fromPlatform == 'qkonnect'){
-                setTimeout(()=>{
-                    authUser("1", "0");
-                }, 2000);
-            }
-
-            if(fromPlatform == 'salesforce' && callInitStatus == "Ringing"){
-                setTimeout(()=>{
-                    authUser("1", "0");
-                }, 2000);
-            }
         }
     
         function sipSendDTMF(c) {
@@ -1892,6 +1880,13 @@
                             document.getElementById("alert-msg").style.color = "red";
                             authUser("0", "0");
                         }
+
+                        if((callInitStatus == "Call" || callInitStatus == "Ringing") && e.type == "terminated"){
+                            setTimeout(()=>{
+                                authUser("1", "0");
+                            }, 1000);
+                        }
+
                         if (e.session == oSipSessionRegister) {
                             // uiOnConnectionEvent(false, false);
     
