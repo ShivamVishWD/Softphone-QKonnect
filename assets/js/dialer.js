@@ -119,10 +119,10 @@ var DialPad = {
 				// 		screen.substring(0, screen.length - 1)
 				// 	);
 				// 	break;
-				case 13:
-					DialPad.press($('.dial-key-wrap[data-key="call"]'));
-					DialPad.call();
-					break;
+				// case 13:
+				// 	DialPad.press($('.dial-key-wrap[data-key="call"]'));
+				// 	DialPad.call();
+				// 	break;
 				case 96:
 					DialPad.press($('.dial-key-wrap[data-key="0"]'));
 					screen = $(".dial-screen").val(screen + "0");
