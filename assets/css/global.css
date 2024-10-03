@@ -230,6 +230,10 @@
   margin-bottom: 5px;
 }
 
+.dial-pad-wrap .left-pan .calling .number {
+  font-size: 14px;
+}
+
 .dial-pad-wrap .left-pan .calling .photo {
   width: 80px;
   height: 80px;
