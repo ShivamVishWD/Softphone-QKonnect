@@ -398,7 +398,7 @@
                         }
                         setTimeout(()=>{
                             sipRegister();
-                            getUsers();
+                            //getUsers();
                         }, 2000);
                     }else if(result.status == '200' && result.agent_call_status == "1"){
                         document.getElementById("alert-msg").innerText = "Already connected on another panel";
@@ -759,6 +759,37 @@
 
         async function getUsers(){
 
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            const raw = JSON.stringify({
+                "api_key": userAPIKey
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow",
+            };
+
+            fetch("https://qkonnect.io/api/getActiveAgentList.php", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result, "extension api response")
+                if(result.status == "200" && result.active_agent_list.length > 0){
+                    let option = '<option value="">--Select Agent--</option>';
+                    for(let item of result.active_agent_list){
+                        if(String(item.extension) != String(userExtension)){
+                            option += '<option value="'+item.extension+'">'+item.extension+' - '+item.agent_name+'</option>'
+                        }
+                    }
+                    document.querySelector("#agents-for-transfer").innerHTML = option;
+                    document.querySelector('#agents-for-conferance').innerHTML = option;
+                }
+            })
+            .catch((error) => console.error(error));
+            /*
             if(getExtension && getExtension != null && getExtension != ''){
                 
                 const myHeaders = new Headers();
@@ -820,6 +851,7 @@
                 // Call APEX Class to get
                 sforce.opencti.runApex(args) 
             }
+            */
         }
         
         /*
@@ -1830,13 +1862,14 @@
                             document.getElementById("alert-msg").style.color = "green";
                             authUser("1", "0");
                         }
-                        if(e.type == "connected"){
+                        if(callInitStatus == "Ringing" && e.type == "connected"){
                             callInitStatus = "Connected"; 
                             document.querySelector(".title").innerHTML = "Connected";
                             document.querySelector(".call-connected-options").classList.remove("hide");
                             document.querySelector(".call-connected-options").classList.add("show");
                             document.querySelector("#hold-btn").disabled = false;
                             document.querySelector("#mute-btn").disabled = false;
+                            getUsers();
                         }
                         args = {
                             callback: function(result) {
