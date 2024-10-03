@@ -277,7 +277,7 @@
 }
 
 .dial-pad-wrap .left-pan .calling .call-end {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .dial-pad-wrap .left-pan .calling .call-end.show{
@@ -289,17 +289,17 @@
 }
 
 .dial-pad-wrap .left-pan .calling .call-end .btn-hangup {
-  width: 200px;
+  width: 120px;
   color: #eee;
   /*font-size: 20px;*/
-  border-radius: 25px;
+  border-radius: 20px;
   background: #c0392b;
   border: 2px solid #90392b;
 }
 
 .dial-pad-wrap .left-pan .calling .call-end .btn-hangup .hangup-icon{
-    height: 30px;
-    width: 50px;
+    height: 25px;
+    width: 30px;
     margin-top: -3px;
 }
 .dial-pad-wrap .left-pan .calling .call-recieve.hide{
@@ -310,6 +310,29 @@
   justify-content: space-evenly;
   align-items: center;
   margin-top: 10px;
+}
+
+.dial-pad-wrap .left-pan .calling .call-divert-btn {
+  font-size: 12px;
+  background-color: transparent;
+  color: #fff;
+  border: 1.2px solid #fbfbfb;
+  border-radius: 10px;
+}
+
+.dial-pad-wrap .left-pan .calling .call-divert-btn.active {
+  background-color: #fbfbfb;
+  color: #000;
+  border: 1.2px solid #000;
+}
+
+.dial-pad-wrap .left-pan .calling .action-click-btn {
+  background-color: #fbfbfb;
+  color: #000;
+  border: 1.2px solid #000;
+  font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 .dial-pad-wrap .left-pan .calling .action .btn .fa-mic:before {

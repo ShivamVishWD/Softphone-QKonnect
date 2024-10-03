@@ -133,25 +133,25 @@
                     <button type="button" class="btn btn-danger btn-xl btn-round" id="reject-call"><img src="assets/images/end-call.png" style="height: 20px; width: 20px"/></button>
                     <button type="button" class="btn btn-success btn-xl btn-round" id="pick-call"><img src="assets/images/call.png" style="height: 20px; width: 20px"/></button>
                 </div>
-                <div style="margin-top: 10px;">
-                    <button onclick="showCallDivert('transfer')">Call Transfer</button>
-                    <button onclick="showCallDivert('conferance')">Call Conferance</button>
+                <div style="margin-top: 6px; margin-bottom: 4px;">
+                    <button onclick="showCallDivert('transfer')" class="call-divert-btn active" id="call-transfer-tab">Call Transfer</button>
+                    <button onclick="showCallDivert('conferance')" class="call-divert-btn" id="call-conferance-tab">Call Conference</button>
                 </div>
                 <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
-                    <label style="margin-bottom: 5px;">Select Agent for Call Transfer</label>
-                    <select name="agents-for-transfer" id="agents-for-transfer">
+                    <label style="margin-bottom: 0.5px; font-size: 12px">Select Agent for Call Transfer</label>
+                    <select name="agents-for-transfer" id="agents-for-transfer" style="font-size: 14px;">
                         <option value="">--Select Agent--</option>
                     </select>
-                    <button type="button" onclick="callTransfer('transfer')" style="margin-top: 8px;">Transfer</button>
+                    <button type="button" onclick="callTransfer('transfer')" class="action-click-btn" style="margin-top: 8px;">Transfer</button>
                 </div>
                 <div class="dialpad-call" id="call-conferance-section" style="margin-top: 10px; display: none;">
-                    <label style="margin-bottom: 5px;">Select Agents for Conferance</label>
-                    <select name="agents-for-conferance" id="agents-for-conferance" multiple>
+                    <label style="margin-bottom: 0.5px; font-size: 12px">Select Agents for Conference</label>
+                    <select name="agents-for-conferance" id="agents-for-conferance" style="font-size: 14px;" multiple>
                         <option value="">--Select Agent--</option>
                     </select>
-                    <button type="button" onclick="callTransfer('conferance')" style="margin-top: 8px;">Conferance</button>
+                    <button type="button" onclick="callTransfer('conferance')" class="action-click-btn" style="margin-top: 8px;">Conference</button>
                 </div>
-                <button onclick="newCase()" id="new-case-btn" style="margin-top: 10px;">New Case</button>
+                <button onclick="newCase()" id="new-case-btn" class="action-click-btn" style="margin-top: 10px;">New Case</button>
             </div>
         </div>
         <div class="dial-pad hide">
@@ -706,9 +706,13 @@
             if(showType == 'transfer'){
                 document.querySelector("#call-conferance-section").style.display = "none";
                 document.querySelector("#call-transfer-section").style.display = "block";
+                document.querySelector("#call-conferance-tab").classList.remove('active');
+                document.querySelector("#call-transfer-tab").classList.add('active');
             }else if(showType == 'conferance'){
                 document.querySelector("#call-transfer-section").style.display = "none";
                 document.querySelector("#call-conferance-section").style.display = "block";
+                document.querySelector("#call-transfer-tab").classList.remove('active');
+                document.querySelector("#call-conferance-tab").classList.add('active');
             }
         }
 
@@ -1886,7 +1890,7 @@
                                 authUser("1", "0");
                             }, 1000);
                         }
-                        
+
                         if (e.session == oSipSessionRegister) {
                             // uiOnConnectionEvent(false, false);
     
