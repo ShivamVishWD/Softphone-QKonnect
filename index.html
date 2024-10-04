@@ -98,18 +98,6 @@
         </table>
     </div>
     <div class="dial-pad-wrap">
-        <!-- <div id="loading" class="loading show">
-            <center>
-                <p>Loading...</p>
-            </center>
-        </div>
-    
-        <div id="unable-to-connect" class="unable-to-connect hide">
-            <center>
-                <p id="unable-connect-text">Unable to connect. Please check your network or try again later.</p>
-                <button onclick="retryConnection()" class="btn btn-primary">Retry</button>
-            </center>
-        </div> -->
         <div class="left-pan">
             <div class="calling">
                 <div class="title fadeIn animated infinite">Calling</div>
@@ -363,11 +351,8 @@
             try{
 
                 if(extension == "" || apikey == ""){
-                    //document.querySelector(".loading").classList.add('hide');
-                    //document.querySelector(".unable-to-connect").classList.add('show');
                     document.querySelector(".alert-msg").innerText = "Unable to Connect(Forbidden), try again";
                     document.querySelector(".alert-msg").style.color = "red";
-
                 }
 
                 const myHeaders = new Headers();
@@ -390,8 +375,6 @@
                 .then((result) => {
                     console.log('provider result :',result)
                     if(result.status == '200' && result.agent_call_status == "0"){
-                        document.querySelector(".loading").classList.add('hide')
-                        document.querySelector(".unable-to-connect").classList.add('hide');
                         document.querySelector(".dial-pad").classList.add('show')
                         credentialObj.identity_impi = extension;
                         credentialObj.identity_display_name = extension;
@@ -406,25 +389,17 @@
                     }else if(result.status == '200' && result.agent_call_status == "1"){
                         document.getElementById("alert-msg").innerText = "Already connected on another panel";
                         document.getElementById("alert-msg").style.color = "goldenrod";
-                        document.querySelector(".loading").classList.add('hide')
-                        document.querySelector(".unable-to-connect").classList.add('hide');
                         document.querySelector(".dial-pad").classList.add('show')
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
                     }else{
-                        document.querySelector(".loading").classList.add('hide');
-                        document.querySelector(".unable-to-connect").classList.add('hide');
                         document.querySelector(".dial-pad").classList.add('show');
                         document.getElementById("alert-msg").innerText = "Unable to connect";
                         document.getElementById("alert-msg").style.color = "red";
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
-                        //document.querySelector('#unable-connect-text').innerHTML = "Unable to connect -> "+result.message;
                     }
                 })
                 .catch((error) => {
                     console.error(error);
-                    // document.querySelector(".loading").classList.add('hide');
-                    // document.querySelector(".unable-to-connect").classList.add('show');
-                    //document.querySelector('#unable-connect-text').innerHTML = "Unable to connect "+error;
                     document.querySelector(".alert-msg").innerText = "Unable to Connect(Forbidden), try again";
                     document.querySelector(".alert-msg").style.color = "red";
                 });
