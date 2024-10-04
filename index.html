@@ -98,7 +98,7 @@
         </table>
     </div>
     <div class="dial-pad-wrap">
-        <div id="loading" class="loading show">
+        <!-- <div id="loading" class="loading show">
             <center>
                 <p>Loading...</p>
             </center>
@@ -109,7 +109,7 @@
                 <p id="unable-connect-text">Unable to connect. Please check your network or try again later.</p>
                 <button onclick="retryConnection()" class="btn btn-primary">Retry</button>
             </center>
-        </div>
+        </div> -->
         <div class="left-pan">
             <div class="calling">
                 <div class="title fadeIn animated infinite">Calling</div>
@@ -363,8 +363,11 @@
             try{
 
                 if(extension == "" || apikey == ""){
-                    document.querySelector(".loading").classList.add('hide');
-                    document.querySelector(".unable-to-connect").classList.add('show');
+                    //document.querySelector(".loading").classList.add('hide');
+                    //document.querySelector(".unable-to-connect").classList.add('show');
+                    document.querySelector(".alert-msg").innerText = "Unable to Connect(Forbidden), try again";
+                    document.querySelector(".alert-msg").style.color = "red";
+
                 }
 
                 const myHeaders = new Headers();
@@ -419,9 +422,11 @@
                 })
                 .catch((error) => {
                     console.error(error);
-                    document.querySelector(".loading").classList.add('hide');
-                    document.querySelector(".unable-to-connect").classList.add('show');
+                    // document.querySelector(".loading").classList.add('hide');
+                    // document.querySelector(".unable-to-connect").classList.add('show');
                     //document.querySelector('#unable-connect-text').innerHTML = "Unable to connect "+error;
+                    document.querySelector(".alert-msg").innerText = "Unable to Connect(Forbidden), try again";
+                    document.querySelector(".alert-msg").style.color = "red";
                 });
             }catch(error){
                 console.log("Error Providers : ",error);
@@ -1805,6 +1810,8 @@
                             callRecieveBtns.classList.add("show")
                             callRecieveBtns.classList.remove("hide")
 
+                            callInitStatus = "Ringing";
+
                             authUser("1", "1");
     
                             DialPad.call();
@@ -1919,6 +1926,12 @@
                         }
                         
                         if((callInitStatus == "Call" || callInitStatus == "Ringing") && e.type == "terminated"){
+                            setTimeout(()=>{
+                                authUser("1", "0");
+                            }, 1000);
+                        }
+
+                        if(fromPlatform == "qkonnect") {
                             setTimeout(()=>{
                                 authUser("1", "0");
                             }, 1000);
