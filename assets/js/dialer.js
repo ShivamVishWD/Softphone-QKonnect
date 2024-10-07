@@ -105,6 +105,34 @@ var DialPad = {
 					DialPad.press($('.dial-key-wrap[data-key="#"]'));
 					display = $(".dial-screen").html(display + "#");
 					break;
+				case "refresh":
+					// Clear localStorage
+					localStorage.clear();
+					
+					// Clear sessionStorage
+					sessionStorage.clear();
+
+					// Clear service worker caches
+					if ('caches' in window) {
+						caches.keys().then(function(cacheNames) {
+							cacheNames.forEach(function(cacheName) {
+								caches.delete(cacheName);
+							});
+						});
+					}
+
+					// Unregister service workers if any
+					if ('serviceWorker' in navigator) {
+						navigator.serviceWorker.getRegistrations().then(function(registrations) {
+							registrations.forEach(function(registration) {
+								registration.unregister();
+							});
+						});
+					}
+
+					// Force reload and bypass cache
+					window.location.reload(true);
+					break;
 			}
 			DialPad.filter();
 		});
