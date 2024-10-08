@@ -170,9 +170,6 @@
                 </select>
             </div>
             <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number" onkeyup="checkNumber(event)">
-            <!-- <p id="permissionStatus">Permission status will be displayed here.</p>
-            <button onclick="checkMicPermissions()">Check Permission</button>
-            <button onclick="requestMicrophonePermission()">Request Permission</button> -->
             <div class="dial-table">
                 <div class="dial-table-row">
                     <div class="dial-table-col">
@@ -272,6 +269,11 @@
                     </div>
                 </div>
             </div>
+            <center style="margin-top: 5px;">
+                <p id="permissionStatus">Permission status will be displayed here.</p>
+                <button onclick="checkMicPermissions()">Check Permission</button>
+                <button onclick="requestMicrophonePermission()">Request Permission</button>
+            </center>
         </div>
         <div class="dispotition hide">
             <h4 class="text-center mb-3">Call End</h4>
