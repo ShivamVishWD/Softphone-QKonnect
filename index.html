@@ -359,6 +359,12 @@
             userExtension = getExtension.trim();
         }
 
+        var dialingNumber = urlParams.get('callerno');
+        console.log('dialingNumber : ',dialingNumber);
+        if(dialingNumber && dialingNumber != null && dialingNumber != ''){
+            checkProviders(userExtension, userAPIKey);
+        }
+
         var hasApiKey = urlParams.has('apikey') && urlParams.get('apikey').trim() !== '';
         var hasExtension = urlParams.has('extension') && urlParams.get('extension').trim() !== '';
 
@@ -371,7 +377,7 @@
             checkProviders(userExtension, userAPIKey);
         }
 
-        async function checkProviders(extension, apikey, from='qkonnect'){
+        async function checkProviders(extension, apikey, from='qkonnect', dialNumber=''){
             try{
 
                 if(extension == "" || apikey == ""){
@@ -398,7 +404,7 @@
                 .then((response) => response.json())
                 .then((result) => {
                     console.log('provider result :',result)
-                    if(result.status == '200' && result.agent_call_status == "0"){
+                    if(result.status == '200' && result.agent_call_status == "0" && result.agent_status == 'online'){
                         document.querySelector(".dial-pad").classList.add('show')
                         credentialObj.identity_impi = extension;
                         credentialObj.identity_display_name = extension;
@@ -410,8 +416,13 @@
                             sipRegister();
                             //getUsers();
                         }, 2000);
+                    }else if(result.status == '200' && result.agent_call_status == "0" && result.agent_status != 'online') {
+                        document.getElementById("alert-msg").innerText = "Agent is not active";
+                        document.getElementById("alert-msg").style.color = "red";
+                        document.querySelector(".dial-pad").classList.add('show')
+                        document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
                     }else if(result.status == '200' && result.agent_call_status == "1"){
-                        document.getElementById("alert-msg").innerText = "Already connected on another panel";
+                        document.getElementById("alert-msg").innerText = "Agent already on a call";
                         document.getElementById("alert-msg").style.color = "goldenrod";
                         document.querySelector(".dial-pad").classList.add('show')
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
@@ -1956,6 +1967,14 @@
                             document.getElementById("alert-msg").innerText = "Connected";
                             document.getElementById("alert-msg").style.color = "green";
                             authUser("1", "0");
+
+                            if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
+                                document.querySelector(".title").innerHTML = "Calling";
+                                document.querySelector("#dialed-number").value = dialingNumber;
+                                document.querySelector("#caller-number").value = dialingNumber;
+                                DialPad.call();
+                                sipCall('call-audio', dialingNumber);
+                            }
                         }
                         if(callInitStatus == "Ringing" && e.type == "connected"){
                             callInitStatus = "Connected"; 
@@ -2282,7 +2301,7 @@
     <script type="text/javascript">
         document.querySelector("#call-init").addEventListener("click", ()=>{
             const isConnectedMsg = document.getElementById("alert-msg").innerText;
-            if(isConnectedMsg == "Waiting for connection" || isConnectedMsg == "Not Connected"){
+            if(isConnectedMsg == "Waiting for connection" || isConnectedMsg == "Not Connected" || isConnectedMsg == "Unable to connect" || isConnectedMsg.includes('no')){
                 return;
             }
             document.querySelector(".title").innerHTML = "Calling";
