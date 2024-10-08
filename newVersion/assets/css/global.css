@@ -307,6 +307,27 @@
   cursor: pointer;
 }
 
+.dial-pad-wrap .left-pan .calling .dtmf-keypad-table{
+  height: 100%;
+  width: 100%;
+  border: 1px solid #000;
+  border-collapse: collapse;
+  background-color: #fbfbfb;
+}
+
+.dial-pad-wrap .left-pan .calling .dtmf-keypad-table tr td {
+  background-color: #fff;
+}
+
+.dial-pad-wrap .left-pan .calling .dtmf-keypad-table tr td input {
+  transition: 0.3s all;
+}
+
+.dial-pad-wrap .left-pan .calling .dtmf-keypad-table tr td input:hover{
+  background-color: #EA396E;
+  color: #fff;
+}
+
 .dial-pad-wrap .left-pan .calling .action .btn .fa-mic:before {
   content: "\f131";
 }

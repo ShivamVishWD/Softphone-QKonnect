@@ -2,6 +2,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="Keywords" content="Qkonnect, qkonnect cti, cti, html cti, WebRTC CTI, sip call, SIP Calling, Call Center, Call Service, Softphone" />
+    <meta name="Description" content="Qkonnect CTI tool developed by Quadrafort and Made for enhance your calling services by softphone" />
+    <meta name="author" content="Shivam Vishwakarma" />
 	<title>Phone View</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -125,6 +128,7 @@
                 <div style="margin-top: 6px; margin-bottom: 4px;">
                     <button onclick="showCallDivert('transfer')" class="call-divert-btn active" id="call-transfer-tab">Call Transfer</button>
                     <button onclick="showCallDivert('conferance')" class="call-divert-btn" id="call-conferance-tab">Call Conference</button>
+                    <button onclick="showCallDivert('dtmf-transfer')" class="call-divert-btn" id="call-dtmf-tab">DTMF Transfer</button>
                 </div>
                 <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
                     <label style="margin-bottom: 0.5px; font-size: 12px">Select Agent for Call Transfer</label>
@@ -140,6 +144,16 @@
                     </select>
                     <button type="button" onclick="callTransfer('conferance')" class="action-click-btn" style="margin-top: 8px;">Conference</button>
                 </div>
+                <center>
+                    <div class="dialpad-call" id="call-dtmf-section" style="width:250; height:240; display: none;">
+                        <table class="dtmf-keypad-table">
+                            <tr><td><input type="button" style="width: 33%" class="btn" value="1" onclick="sipSendDTMF('1');" /><input type="button" style="width: 33%" class="btn" value="2" onclick="sipSendDTMF('2');" /><input type="button" style="width: 33%" class="btn" value="3" onclick="sipSendDTMF('3');" /></td></tr>
+                            <tr><td><input type="button" style="width: 33%" class="btn" value="4" onclick="sipSendDTMF('4');" /><input type="button" style="width: 33%" class="btn" value="5" onclick="sipSendDTMF('5');" /><input type="button" style="width: 33%" class="btn" value="6" onclick="sipSendDTMF('6');" /></td></tr>
+                            <tr><td><input type="button" style="width: 33%" class="btn" value="7" onclick="sipSendDTMF('7');" /><input type="button" style="width: 33%" class="btn" value="8" onclick="sipSendDTMF('8');" /><input type="button" style="width: 33%" class="btn" value="9" onclick="sipSendDTMF('9');" /></td></tr>
+                            <tr><td><input type="button" style="width: 33%" class="btn" value="*" onclick="sipSendDTMF('*');" /><input type="button" style="width: 33%" class="btn" value="0" onclick="sipSendDTMF('0');" /><input type="button" style="width: 33%" class="btn" value="#" onclick="sipSendDTMF('#');" /></td></tr>
+                        </table>
+                    </div>
+                </center>
                 <button onclick="newCase()" id="new-case-btn" class="action-click-btn" style="margin-top: 10px;">New Case</button>
             </div>
         </div>
@@ -156,6 +170,9 @@
                 </select>
             </div>
             <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number" onkeyup="checkNumber(event)">
+            <!-- <p id="permissionStatus">Permission status will be displayed here.</p>
+            <button onclick="checkMicPermissions()">Check Permission</button>
+            <button onclick="requestMicrophonePermission()">Request Permission</button> -->
             <div class="dial-table">
                 <div class="dial-table-row">
                     <div class="dial-table-col">
@@ -255,12 +272,6 @@
                     </div>
                 </div>
             </div>
-            <br/>
-            <center>
-                <p id="permissionStatus">Permission status will be displayed here.</p>
-                <button onclick="checkMicPermissions()">Check Permission</button>
-                <button onclick="requestMicrophonePermission()">Request Permission</button>
-            </center>
         </div>
         <div class="dispotition hide">
             <h4 class="text-center mb-3">Call End</h4>
@@ -698,21 +709,32 @@
             console.log(showType, 'show type')
             if(showType == 'transfer'){
                 document.querySelector("#call-conferance-section").style.display = "none";
+                document.querySelector("#call-dtmf-section").style.display = "none";
                 document.querySelector("#call-transfer-section").style.display = "block";
                 document.querySelector("#call-conferance-tab").classList.remove('active');
+                document.querySelector('#call-dtmf-tab').classList.remove('active');
                 document.querySelector("#call-transfer-tab").classList.add('active');
             }else if(showType == 'conferance'){
                 document.querySelector("#call-transfer-section").style.display = "none";
+                document.querySelector("#call-dtmf-section").style.display = "none";
                 document.querySelector("#call-conferance-section").style.display = "block";
                 document.querySelector("#call-transfer-tab").classList.remove('active');
+                document.querySelector('#call-dtmf-tab').classList.remove('active');
                 document.querySelector("#call-conferance-tab").classList.add('active');
+            }else if(showType == 'dtmf-transfer'){
+                document.querySelector("#call-transfer-section").style.display = "none";
+                document.querySelector("#call-conferance-section").style.display = "none";
+                document.querySelector("#call-dtmf-section").style.display = "block";
+                document.querySelector("#call-transfer-tab").classList.remove('active');
+                document.querySelector("#call-conferance-tab").classList.remove('active');
+                document.querySelector('#call-dtmf-tab').classList.add('active');
             }
         }
 
         function checkMicPermissions() {
             navigator.permissions.query({ name: 'microphone' })
             .then(function(permissionStatus) {
-                document.getElementById('permissionStatus').innerText = `Microphone permission: ${permissionStatus.state}`;
+                document.getElementById('permissionStatus').innerText = `Microphone and Sound permission: ${permissionStatus.state}`;
             })
             .catch(function(err) {
                 console.error('Error checking microphone permission:', err);
@@ -722,7 +744,7 @@
         function requestMicrophonePermission() {
             navigator.mediaDevices.getUserMedia({ audio: true })
             .then(function(stream) {
-                document.getElementById('permissionStatus').innerText = "Microphone access granted!";
+                document.getElementById('permissionStatus').innerText = "Microphone and Sound access granted!";
                 // Stop the stream to release resources
                 stream.getTracks().forEach(track => track.stop());
             })
@@ -1397,7 +1419,7 @@
                 else {
                     oConfigCall.screencast_window_id = 0x00000000;
                     if (oSipSessionCall.startBfcpShare(oConfigCall) != 0) {
-                        txtCallStatus.value = 'Failed to start BFCP share';
+                        // txtCallStatus.value = 'Failed to start BFCP share';
                     }
                     else {
                         oSipSessionCall.bfcpSharing = true;
@@ -1432,11 +1454,13 @@
         function sipToggleHoldResume() {
             if (oSipSessionCall) {
                 var i_ret;
+                console.log(oSipSessionCall.bHeld, 'oSipSessionCall.bHeld');
                 //btnHoldResume.disabled = true;
                 //txtCallStatus.innerHTML = oSipSessionCall.bHeld ? '<i>Resuming the call...</i>' : '<i>Holding the call...</i>';
                 i_ret = oSipSessionCall.bHeld ? oSipSessionCall.resume() : oSipSessionCall.hold();
                 console.log('i_ret : ',i_ret)
                 if (i_ret != 0) {
+                    document.querySelector(".title").innerHTML
                   //  txtCallStatus.innerHTML = '<i>Hold / Resume failed</i>';
                   //  btnHoldResume.disabled = false;
                     return;
@@ -1446,7 +1470,6 @@
     
         // Mute or Unmute the call
         function sipToggleMute() {
-            console.log(oSipSessionCall, 'oSipSessionCall');
             if (oSipSessionCall) {
                 var i_ret;
                 var bMute = !oSipSessionCall.bMute;
@@ -1635,7 +1658,7 @@
             else if (evt.ctrlKey && evt.shiftKey) { // CTRL + SHIFT
                 if (evt.keyCode == 65 || evt.keyCode == 86) { // A (65) or V (86)
                     bDisableVideo = (evt.keyCode == 65);
-                    txtCallStatus.innerHTML = '<i>Video ' + (bDisableVideo ? 'disabled' : 'enabled') + '</i>';
+                    // txtCallStatus.innerHTML = '<i>Video ' + (bDisableVideo ? 'disabled' : 'enabled') + '</i>';
                     window.localStorage.setItem('org.doubango.expert.disable_video', bDisableVideo);
                 }
             }
@@ -1862,15 +1885,8 @@
                             // Call APEX Class to get
                             sforce.opencti.runApex(args)
                             callType = "Incoming";
-                            console.log(String(sRemoteNumber).includes('000000000'), 'conferance condition')
-                            if(String(sRemoteNumber).includes('000000000')){
-                                document.getElementById("contact-name").innerText = 'Conference Call';
-                                document.getElementById("contact-number").innerText = '';
-                                document.getElementById("dialed-number").value = '';
-                            }else{
-                                document.getElementById("contact-number").innerText = String(sRemoteNumber).slice(-10);
-                                document.getElementById("dialed-number").value = String(sRemoteNumber).slice(-10);
-                            }
+                            document.getElementById("contact-number").innerText = String(sRemoteNumber).slice(-10);
+                            document.getElementById("dialed-number").value = String(sRemoteNumber).slice(-10);
                             
                             document.querySelector(".call-recieve").classList.remove("hide");
                             document.querySelector(".call-recieve").classList.add("show");
@@ -2103,7 +2119,7 @@
                         if (e.session == oSipSessionCall) {
                             if (oSipSessionCall.bTransfering) {
                                 oSipSessionCall.bTransfering = false;
-                                this.AVSession.TransferCall(this.transferUri);
+                                //this.AVSession.TransferCall(this.transferUri);
                             }
                             /*
                             btnHoldResume.value = 'Resume';
@@ -2111,8 +2127,9 @@
                             txtCallStatus.innerHTML = '<i>Call placed on hold</i>';
                             oSipSessionCall.bHeld = true;
                             */
-                            document.querySelector(".title").innerHTML = "On Hold";
+                            document.querySelector(".title").innerHTML += " (On Hold)";
                             document.getElementById('hold-btn').classList.add('active');
+                            oSipSessionCall.bHeld = true;
                         }
                         break;
                     }
@@ -2126,7 +2143,7 @@
                             txtCallStatus.innerHTML = '<i>Failed to place remote party on hold</i>';
                             */
                         }
-                        document.querySelector(".title").innerHTML = "Failed to place remote party on hold";
+                        document.querySelector(".title").innerHTML += " (Failed to place on hold)";
                         document.getElementById('hold-btn').classList.remove('active');
                         break;
                     }
@@ -2139,7 +2156,7 @@
                             btnHoldResume.disabled = false;
                             txtCallStatus.innerHTML = '<i>Call taken off hold</i>';
                             */
-                            document.querySelector(".title").innerHTML = "Connected";
+                            document.querySelector(".title").innerHTML = "Connected ("+callType+")";
                             document.getElementById('hold-btn').classList.remove('active');
                             oSipSessionCall.bHeld = false;
     
@@ -2158,18 +2175,17 @@
                             btnHoldResume.disabled = false;
                             txtCallStatus.innerHTML = '<i>Failed to unhold call</i>';
                             */
-                            document.querySelector(".title").innerHTML = "Failed to unhold call";
+                            document.querySelector(".title").innerHTML += " (Failed to unhold call)";
                         }
                         break;
                     }
                 case 'm_remote_hold':
                     {
                         if (e.session == oSipSessionCall) {
-                            document.querySelector(".title").innerHTML = "On Hold";
+                            document.querySelector(".title").innerHTML += " (On Hold)";
                             /*
                             txtCallStatus.innerHTML = '<i>Placed on hold by remote party</i>';
                             */
-                            document.querySelector(".title").innerHTML = "Placed on hold by remote party";
                             document.getElementById('hold-btn').classList.add('active');
                         }
                         break;
@@ -2177,7 +2193,7 @@
                 case 'm_remote_resume':
                     {
                         if (e.session == oSipSessionCall) {
-                            document.querySelector(".title").innerHTML = "Connected";
+                            document.querySelector(".title").innerHTML = "Connected ("+callType+")";
                             document.getElementById('hold-btn').classList.remove('active');
                             // txtCallStatus.innerHTML = '<i>Taken off hold by remote party</i>';
                         }
@@ -2186,7 +2202,7 @@
                 case 'm_bfcp_info':
                     {
                         if (e.session == oSipSessionCall) {
-                            txtCallStatus.innerHTML = 'BFCP Info: <i>' + e.description + '</i>';
+                            // txtCallStatus.innerHTML = 'BFCP Info: <i>' + e.description + '</i>';
                         }
                         break;
                     }
