@@ -156,9 +156,6 @@
                 </select>
             </div>
             <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number" onkeyup="checkNumber(event)">
-            <!-- <p id="permissionStatus">Permission status will be displayed here.</p>
-            <button onclick="checkMicPermissions()">Check Permission</button>
-            <button onclick="requestMicrophonePermission()">Request Permission</button> -->
             <div class="dial-table">
                 <div class="dial-table-row">
                     <div class="dial-table-col">
@@ -258,6 +255,12 @@
                     </div>
                 </div>
             </div>
+            <br/>
+            <center>
+                <p id="permissionStatus">Permission status will be displayed here.</p>
+                <button onclick="checkMicPermissions()">Check Permission</button>
+                <button onclick="requestMicrophonePermission()">Request Permission</button>
+            </center>
         </div>
         <div class="dispotition hide">
             <h4 class="text-center mb-3">Call End</h4>
@@ -709,7 +712,7 @@
         function checkMicPermissions() {
             navigator.permissions.query({ name: 'microphone' })
             .then(function(permissionStatus) {
-                document.getElementById('permissionStatus').innerText = `Microphone and Sound permission: ${permissionStatus.state}`;
+                document.getElementById('permissionStatus').innerText = `Microphone permission: ${permissionStatus.state}`;
             })
             .catch(function(err) {
                 console.error('Error checking microphone permission:', err);
@@ -719,7 +722,7 @@
         function requestMicrophonePermission() {
             navigator.mediaDevices.getUserMedia({ audio: true })
             .then(function(stream) {
-                document.getElementById('permissionStatus').innerText = "Microphone and Sound access granted!";
+                document.getElementById('permissionStatus').innerText = "Microphone access granted!";
                 // Stop the stream to release resources
                 stream.getTracks().forEach(track => track.stop());
             })
