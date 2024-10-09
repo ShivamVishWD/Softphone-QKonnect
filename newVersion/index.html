@@ -524,7 +524,9 @@
                 sforce.opencti.runApex(args) 
 
                 if(agentStatus == "1" && agentCallStatus == "0" && reconnect){
-                    sipRegister();
+                    setTimeout(() => {
+                        sipRegister();
+                    }, 2000);
                 }
             }catch(error){
                 console.log("catch error : ",error)
