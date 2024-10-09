@@ -125,35 +125,37 @@
                     <button type="button" class="btn btn-danger btn-xl btn-round" id="reject-call"><img src="assets/images/end-call.png" style="height: 20px; width: 20px"/></button>
                     <button type="button" class="btn btn-success btn-xl btn-round" id="pick-call"><img src="assets/images/call.png" style="height: 20px; width: 20px"/></button>
                 </div>
-                <div style="margin-top: 6px; margin-bottom: 4px;">
-                    <button onclick="showCallDivert('transfer')" class="call-divert-btn active" id="call-transfer-tab">Call Transfer</button>
-                    <button onclick="showCallDivert('conferance')" class="call-divert-btn" id="call-conferance-tab">Call Conference</button>
-                    <button onclick="showCallDivert('dtmf-transfer')" class="call-divert-btn" id="call-dtmf-tab">DTMF Transfer</button>
-                </div>
-                <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
-                    <label style="margin-bottom: 0.5px; font-size: 12px">Select Agent for Call Transfer</label>
-                    <select name="agents-for-transfer" id="agents-for-transfer" style="font-size: 14px;">
-                        <option value="">--Select Agent--</option>
-                    </select>
-                    <button type="button" onclick="callTransfer('transfer')" class="action-click-btn" style="margin-top: 8px;">Transfer</button>
-                </div>
-                <div class="dialpad-call" id="call-conferance-section" style="margin-top: 10px; display: none;">
-                    <label style="margin-bottom: 0.5px; font-size: 12px">Select Agents for Conference</label>
-                    <select name="agents-for-conferance" id="agents-for-conferance" style="font-size: 14px;" multiple>
-                        <option value="">--Select Agent--</option>
-                    </select>
-                    <button type="button" onclick="callTransfer('conferance')" class="action-click-btn" style="margin-top: 8px;">Conference</button>
-                </div>
-                <center>
-                    <div class="dialpad-call" id="call-dtmf-section" style="width:250; height:240; display: none;">
-                        <table class="dtmf-keypad-table">
-                            <tr><td><input type="button" style="width: 33%" class="btn" value="1" onclick="sipSendDTMF('1');" /><input type="button" style="width: 33%" class="btn" value="2" onclick="sipSendDTMF('2');" /><input type="button" style="width: 33%" class="btn" value="3" onclick="sipSendDTMF('3');" /></td></tr>
-                            <tr><td><input type="button" style="width: 33%" class="btn" value="4" onclick="sipSendDTMF('4');" /><input type="button" style="width: 33%" class="btn" value="5" onclick="sipSendDTMF('5');" /><input type="button" style="width: 33%" class="btn" value="6" onclick="sipSendDTMF('6');" /></td></tr>
-                            <tr><td><input type="button" style="width: 33%" class="btn" value="7" onclick="sipSendDTMF('7');" /><input type="button" style="width: 33%" class="btn" value="8" onclick="sipSendDTMF('8');" /><input type="button" style="width: 33%" class="btn" value="9" onclick="sipSendDTMF('9');" /></td></tr>
-                            <tr><td><input type="button" style="width: 33%" class="btn" value="*" onclick="sipSendDTMF('*');" /><input type="button" style="width: 33%" class="btn" value="0" onclick="sipSendDTMF('0');" /><input type="button" style="width: 33%" class="btn" value="#" onclick="sipSendDTMF('#');" /></td></tr>
-                        </table>
+                <div id="show-in-web">
+                    <div style="margin-top: 6px; margin-bottom: 4px;">
+                        <button onclick="showCallDivert('transfer')" class="call-divert-btn active" id="call-transfer-tab">Call Transfer</button>
+                        <button onclick="showCallDivert('conferance')" class="call-divert-btn" id="call-conferance-tab">Call Conference</button>
+                        <button onclick="showCallDivert('dtmf-transfer')" class="call-divert-btn" id="call-dtmf-tab">DTMF Transfer</button>
                     </div>
-                </center>
+                    <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
+                        <label style="margin-bottom: 0.5px; font-size: 12px">Select Agent for Call Transfer</label>
+                        <select name="agents-for-transfer" id="agents-for-transfer" style="font-size: 14px;">
+                            <option value="">--Select Agent--</option>
+                        </select>
+                        <button type="button" onclick="callTransfer('transfer')" class="action-click-btn" style="margin-top: 8px;">Transfer</button>
+                    </div>
+                    <div class="dialpad-call" id="call-conferance-section" style="margin-top: 10px; display: none;">
+                        <label style="margin-bottom: 0.5px; font-size: 12px">Select Agents for Conference</label>
+                        <select name="agents-for-conferance" id="agents-for-conferance" style="font-size: 14px;" multiple>
+                            <option value="">--Select Agent--</option>
+                        </select>
+                        <button type="button" onclick="callTransfer('conferance')" class="action-click-btn" style="margin-top: 8px;">Conference</button>
+                    </div>
+                    <center>
+                        <div class="dialpad-call" id="call-dtmf-section" style="width:250; height:240; display: none;">
+                            <table class="dtmf-keypad-table">
+                                <tr><td><input type="button" style="width: 33%" class="btn" value="1" onclick="sipSendDTMF('1');" /><input type="button" style="width: 33%" class="btn" value="2" onclick="sipSendDTMF('2');" /><input type="button" style="width: 33%" class="btn" value="3" onclick="sipSendDTMF('3');" /></td></tr>
+                                <tr><td><input type="button" style="width: 33%" class="btn" value="4" onclick="sipSendDTMF('4');" /><input type="button" style="width: 33%" class="btn" value="5" onclick="sipSendDTMF('5');" /><input type="button" style="width: 33%" class="btn" value="6" onclick="sipSendDTMF('6');" /></td></tr>
+                                <tr><td><input type="button" style="width: 33%" class="btn" value="7" onclick="sipSendDTMF('7');" /><input type="button" style="width: 33%" class="btn" value="8" onclick="sipSendDTMF('8');" /><input type="button" style="width: 33%" class="btn" value="9" onclick="sipSendDTMF('9');" /></td></tr>
+                                <tr><td><input type="button" style="width: 33%" class="btn" value="*" onclick="sipSendDTMF('*');" /><input type="button" style="width: 33%" class="btn" value="0" onclick="sipSendDTMF('0');" /><input type="button" style="width: 33%" class="btn" value="#" onclick="sipSendDTMF('#');" /></td></tr>
+                            </table>
+                        </div>
+                    </center>
+                </div>
                 <button onclick="newCase()" id="new-case-btn" class="action-click-btn" style="margin-top: 10px;">New Case</button>
             </div>
         </div>
@@ -379,6 +381,11 @@
 
         if(hasApiKey && hasExtension && userExtension != null && userAPIKey != null){
             checkProviders(userExtension, userAPIKey);
+        }
+
+        var uiPlatform = urlParams.get('platform');
+        if(uiPlatform == "app"){
+            document.getElementById("show-in-web").style.display = "none";
         }
 
         async function checkProviders(extension, apikey, from='qkonnect', dialNumber=''){
@@ -1589,6 +1596,10 @@
 
             callType = "";
             endCallTimer();
+
+            if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
+                console.log("c2c Hanguped Call")
+            }
         }
     
         function sipSendDTMF(c) {
