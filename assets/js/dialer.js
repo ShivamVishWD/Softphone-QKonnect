@@ -106,6 +106,9 @@ var DialPad = {
 					display = $(".dial-screen").html(display + "#");
 					break;
 				case "refresh":
+					if(document.getElementById("alert-msg").innerText == "Agent active on another panel"){
+						break;
+					}
 					// Clear localStorage
 					localStorage.clear();
 					

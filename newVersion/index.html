@@ -370,6 +370,8 @@
         var hasApiKey = urlParams.has('apikey') && urlParams.get('apikey').trim() !== '';
         var hasExtension = urlParams.has('extension') && urlParams.get('extension').trim() !== '';
 
+        var agentDetail = null;
+
         var fromPlatform = "qkonnect";
         if(!hasExtension){
             fromPlatform = "salesforce";
@@ -386,6 +388,10 @@
                     document.querySelector(".alert-msg").innerText = "Unable to Connect(Forbidden), try again";
                     document.querySelector(".alert-msg").style.color = "red";
                 }
+
+                credentialObj.identity_impi = extension;
+                credentialObj.identity_display_name = extension;
+                credentialObj.identity_impu = `sip:${extension}@rec3.qkonnect.io`;
 
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
@@ -406,11 +412,9 @@
                 .then((response) => response.json())
                 .then((result) => {
                     console.log('provider result :',result)
+                    agentDetail = result;
                     if(result.status == '200' && result.agent_call_status == "0" && result.agent_status == 'online'){
                         document.querySelector(".dial-pad").classList.add('show')
-                        credentialObj.identity_impi = extension;
-                        credentialObj.identity_display_name = extension;
-                        credentialObj.identity_impu = `sip:${extension}@rec3.qkonnect.io`;
                         if(from == 'qkonnect'){
                             document.querySelector("#new-case-btn").style.display = 'none';
                         }
@@ -418,21 +422,27 @@
                             sipRegister();
                             //getUsers();
                         }, 2000);
-                    }else if(result.status == '200' && result.agent_call_status == "0" && result.agent_status != 'online') {
-                        document.getElementById("alert-msg").innerText = "Agent is not active";
+                    }else if(result.status == '200' && result.agent_call_status == "0" && result.agent_status != 'online' && from == 'qkonnect') {
+                        document.getElementById("alert-msg").innerText = "Agent is "+result.agent_status;
                         document.getElementById("alert-msg").style.color = "red";
                         document.querySelector(".dial-pad").classList.add('show')
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
+                    }else if(result.status == '200' && result.agent_call_status == "0" && result.agent_status != 'online' && from == 'salesforce') {
+                        document.getElementById("alert-msg").innerText = "Agent is "+result.agent_status + ", retrying...";
+                        document.querySelector(".dial-pad").classList.add('show');
+                        authUser("1", "0", true);
                     }else if(result.status == '200' && result.agent_call_status == "1"){
                         document.getElementById("alert-msg").innerText = "Agent already on a call";
                         document.getElementById("alert-msg").style.color = "goldenrod";
                         document.querySelector(".dial-pad").classList.add('show')
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
-                    }else{
+                    }else if(from == 'qkonnect'){
                         document.querySelector(".dial-pad").classList.add('show');
-                        document.getElementById("alert-msg").innerText = "Unable to connect";
+                        document.getElementById("alert-msg").innerText = "Unable to connect, agent is "+result.agent_status;
                         document.getElementById("alert-msg").style.color = "red";
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
+                    }else if(from == 'salesforce'){
+                        authUser("1", "0", true);
                     }
                 })
                 .catch((error) => {
@@ -445,9 +455,26 @@
             }
         }
 
+        function setUnsetUserActive(logType = "login"){
+            const userDetail = window.localStorage.getItem('userdetail') != null ? JSON.parse(window.localStorage.getItem('userdetail')) : null;
+
+            if(logType == 'login'){
+                if(userDetail == null){
+                    window.localStorage.setItem('userdetail', JSON.stringify(agentDetail));
+                }else if(agentDetail.agent_name == userDetail.agent_name){
+                    document.getElementById("alert-msg").innerText = "Agent active on another panel";
+                    document.getElementById("alert-msg").style.color = "goldenrod";
+                    document.querySelector(".dial-pad").classList.add('show')
+                    document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
+                }
+            }else{
+                window.localStorage.removeItem('userdetail');
+            }
+        }
+
         var idOfObject = '';
 
-        async function authUser(agentStatus = "0", agentCallStatus = "0"){
+        async function authUser(agentStatus = "0", agentCallStatus = "0", reconnect = false){
             try{
                 let status = document.getElementById("agent-status").value;
                 const obj={
@@ -488,6 +515,10 @@
                 };
                 // Call APEX Class to get
                 sforce.opencti.runApex(args) 
+
+                if(agentStatus == "1" && agentCallStatus == "0" && reconnect){
+                    sipRegister();
+                }
             }catch(error){
                 console.log("catch error : ",error)
             }
@@ -572,9 +603,11 @@
 
             if(status == "Online"){
                 console.log('sipRegister called');
+                authUser("1", "0", true);
                 callInitStatus = "Nothing";
                 sipRegister();
             }else{
+                authUser("0", "0");
                 console.log('sipUnRegister called');
                 sipUnRegister();
             }
@@ -2379,6 +2412,11 @@
                     toExtension = toExtension.filter((ext) => { return ext != "" });
                 }
 
+                if(transferType == 'conferance'  && toExtension.length > 5){
+                    alert("You can only add 5 agents for conference");
+                    return;
+                }
+
                 console.log("toExtension : ",toExtension);
 
                 if(transferType == 'transfer' && toExtension == ''){
@@ -2429,7 +2467,7 @@
             sforce.opencti.screenPop({
                 type: sforce.opencti.SCREENPOP_TYPE.URL,
                 params: {
-                    url: '/lightning/o/Case/new'
+                    url: '/lightning/o/Case/list?filterName=__Recent'
                 },
                 callback: function(response) {
                     console.log("new case respionse : ",response)
