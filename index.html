@@ -335,7 +335,7 @@
             expert_disable_early_ims: 'false',
             expert_video_size: '',
             expert_enable_media_caching: 'false',
-            expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"}]',
+            expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"},{"urls":"turn:relay.backups.cz:3478","username":"webrtc","credential":"webrtc"}]',
             expert_disable_callbtn_options: 'false',
             identity_realm: 'free',
             expert_bandwidth: '',
@@ -798,7 +798,7 @@
         }
 
         function requestMicrophonePermission() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
+            navigator.mediaDevices.getUserMedia({ audio: true, video: true })
             .then(function(stream) {
                 document.getElementById('permissionStatus').innerText = "Microphone and Sound access granted!";
                 // Stop the stream to release resources
