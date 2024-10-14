@@ -133,9 +133,12 @@
                     </div>
                     <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
                         <label style="margin-bottom: 0.5px; font-size: 12px">Select Agent for Call Transfer</label>
-                        <select name="agents-for-transfer" id="agents-for-transfer" style="font-size: 14px;">
-                            <option value="">--Select Agent--</option>
-                        </select>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <select name="agents-for-transfer" id="agents-for-transfer" style="font-size: 14px;">
+                                <option value="">--Select Agent--</option>
+                            </select>
+                            <button onclick="getUsers()"><i class="fa fa-refresh"></i></button>
+                        </div>
                         <button type="button" onclick="callTransfer('transfer')" class="action-click-btn" style="margin-top: 8px;">Transfer</button>
                     </div>
                     <div class="dialpad-call" id="call-conferance-section" style="margin-top: 10px; display: none;">
@@ -336,7 +339,7 @@
             expert_video_size: '',
             expert_enable_media_caching: 'false',
             // expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"},{"urls":"turn:relay.backups.cz:3478","username":"webrtc","credential":"webrtc"}]',
-            expert_ice_servers: '[{"url":"stun:global.stun.twilio.com:3478"}]',
+            expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"}]',
             expert_disable_callbtn_options: 'false',
             identity_realm: 'free',
             expert_bandwidth: '',
@@ -350,6 +353,7 @@
         var callType = '';
         var timerInterval;
         var elapsedTime = 0; // in seconds
+        var stunServer = '[{"url":"stun:stun.l.google.com:19302"}]';
 
         var urlParams = new URLSearchParams(window.location.search);
         console.log("urlParams : ",urlParams);
@@ -368,6 +372,11 @@
         var dialingNumber = urlParams.get('callerno');
         console.log('dialingNumber : ',dialingNumber);
         if(dialingNumber && dialingNumber != null && dialingNumber != ''){
+            document.querySelector('.dial-pad').classList.remove('show')
+            document.querySelector('.dial-pad').classList.add('hide')
+
+            document.querySelector(".left-pan").classList.add("active");
+
             checkProviders(userExtension, userAPIKey);
         }
 
@@ -390,7 +399,7 @@
             document.getElementById("show-in-web").style.display = "none";
         }
 
-        async function checkProviders(extension, apikey, from='qkonnect', dialNumber=''){
+        async function checkProviders(extension, apikey, from='salesforce', dialNumber=''){
             try{
 
                 if(extension == "" || apikey == ""){
@@ -422,6 +431,8 @@
                 .then((result) => {
                     console.log('provider result :',result)
                     agentDetail = result;
+                    stunServer = result?.ivr_details?.account_id == "619679" ? [{url:"stun:global.stun.twilio.com:3478"}] : [{url:"stun:stun.l.google.com:19302"}];
+                    credentialObj.expert_ice_servers = result?.ivr_details?.account_id == "619679" ? '[{"url":"stun:global.stun.twilio.com:3478"}]' : '[{"url":"stun:stun.l.google.com:19302"}]';;
                     if(result.status == '200' && result.agent_call_status == "0" && result.agent_status == 'online'){
                         document.querySelector(".dial-pad").classList.add('show')
                         if(from == 'qkonnect'){
@@ -771,6 +782,7 @@
                 document.querySelector("#call-conferance-tab").classList.remove('active');
                 document.querySelector('#call-dtmf-tab').classList.remove('active');
                 document.querySelector("#call-transfer-tab").classList.add('active');
+                getUsers();
             }else if(showType == 'conferance'){
                 document.querySelector("#call-transfer-section").style.display = "none";
                 document.querySelector("#call-dtmf-section").style.display = "none";
@@ -778,6 +790,7 @@
                 document.querySelector("#call-transfer-tab").classList.remove('active');
                 document.querySelector('#call-dtmf-tab').classList.remove('active');
                 document.querySelector("#call-conferance-tab").classList.add('active');
+                getUsers();
             }else if(showType == 'dtmf-transfer'){
                 document.querySelector("#call-transfer-section").style.display = "none";
                 document.querySelector("#call-conferance-section").style.display = "none";
@@ -921,10 +934,17 @@
             .then((result) => {
                 console.log(result, "extension api response")
                 if(result.status == "200" && result.active_agent_list.length > 0){
+                    result.active_agent_list.sort((a, b) => {
+                        if (a.crm_status === "1" && a.call_status === "0") return -1; // Available
+                        if (a.crm_status === "1" && a.call_status === "1") return 0;  // Busy
+                        if (a.crm_status === "0") return 1; // Offline
+                    });
                     let option = '<option value="">--Select Agent--</option>';
                     for(let item of result.active_agent_list){
                         if(String(item.extension) != String(userExtension)){
-                            option += '<option value="'+item.extension+'">'+item.extension+' - '+item.agent_name+'</option>'
+                            const status = item.crm_status == "1" && item.call_status == "0" ? '(Available)' : item.crm_status == "1" && item.call_status == "1" ? '(Busy)' : '(Offline)';
+                            const isDisable = (item.crm_status == "1" && item.call_status == "1") || item.crm_status == "0" && 'disabled';
+                            option += `<option style="display: flex; justify-content: space-between; align-items: center;" value="${item.extension}" ${isDisable}><label style="font-weight: 500;">${item.extension} - ${item.agent_name}</label> ${status}</option>`
                         }
                     }
                     document.querySelector("#agents-for-transfer").innerHTML = option;
@@ -1554,30 +1574,34 @@
                 console.log("Terminating the call...")
                 oSipSessionCall.hangup({ events_listener: { events: '*', listener: onSipEventSession } });
             }
-
+            console.log("callInitStatus : ",callInitStatus)
             if(callInitStatus == "Connected"){
                 callInitStatus = "Call";
                 document.querySelector(".title").innerHTML = "Calling";
-                document.querySelector(".dial-pad").classList.remove("show")
-                document.querySelector(".dial-pad").classList.add("hide")
+                if(!dialingNumber){
+                    document.querySelector(".dial-pad").classList.remove("show")
+                    document.querySelector(".dial-pad").classList.add("hide")
 
-                document.querySelector(".dispotition").classList.add("show")
-                document.querySelector(".dispotition").classList.remove("hide")
+                    document.querySelector(".dispotition").classList.add("show")
+                    document.querySelector(".dispotition").classList.remove("hide")
+                }
 
             }else if(callInitStatus == "Ringing"){
                 callInitStatus = "Call";
                 document.querySelector(".title").innerHTML = "Calling";
-                document.querySelector(".dial-pad").classList.add("show")
-                document.querySelector(".dial-pad").classList.remove("hide")
+                if(!dialingNumber){
+                    document.querySelector(".dial-pad").classList.add("show")
+                    document.querySelector(".dial-pad").classList.remove("hide")
 
-                document.querySelector(".dispotition").classList.remove("show")
-                document.querySelector(".dispotition").classList.add("hide")
+                    document.querySelector(".dispotition").classList.remove("show")
+                    document.querySelector(".dispotition").classList.add("hide")
+                }
             }
 
             var urlParams = new URLSearchParams(window.location.search);
             console.log("urlParams : ",urlParams)
             var getExtension = urlParams.get('extension');
-
+            /*
             if(getExtension && getExtension != null && getExtension != ''){
                 document.querySelector(".dispotition").classList.remove("show")
                 document.querySelector(".dispotition").classList.add("hide")
@@ -1585,6 +1609,7 @@
                 document.querySelector(".dial-pad").classList.add("show")
                 document.querySelector(".dial-pad").classList.remove("hide")
             }
+                */
 
             $(".left-pan").removeClass("active");
             $(".calling").fadeOut(100);
@@ -1602,7 +1627,7 @@
             endCallTimer();
 
             if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
-                console.log("c2c Hanguped Call")
+                console.log("c2cHangupedCall")
             }
         }
     
@@ -1918,33 +1943,63 @@
                             //txtCallStatus.innerHTML = "<i>Incoming call from [<b>" + sRemoteNumber + "</b>]</i>";
                             showNotifICall(sRemoteNumber);
                             document.querySelector("#caller-number").value = String(sRemoteNumber).slice(-10);
-                            args = {
-                                apexClass: 'GetRecordId',
-                                methodName: 'getAccountId',
-                                methodParams: 'phoneNumber='+String(sRemoteNumber).slice(-10),
-                                callback: function(result) {
-                                    if (result.success) {
-                                        console.log('Result Incoming GetRecordId : ',result)
-                                        console.log('Result: ',JSON.parse(result.returnValue.runApex).id);
-                                        let rcrdId = JSON.parse(result.returnValue.runApex).id;
-                                        idOfObject = JSON.parse(result.returnValue.runApex).id;
-                                        document.getElementById("contact-name").innerText = JSON.parse(result.returnValue.runApex).name != "" ? JSON.parse(result.returnValue.runApex).name : "Unknown";
-                                        sforce.opencti.screenPop({
-                                        type: sforce.opencti.SCREENPOP_TYPE.SOBJECT,
-                                        params: {
-                                                    recordId: rcrdId
-                                                }
-                                        });
-                
-                                        
-                                        
-                                    } else {
-                                        console.log('ResultError : ',result.errors);
+                            if(fromPlatform == 'qkonnect') {
+                                const myHeaders = new Headers();
+                                myHeaders.append("Content-Type", "application/json");
+                                
+                                const raw = JSON.stringify({
+                                  "api_key": userAPIKey,
+                                  "caller_number": sRemoteNumber
+                                });
+                                
+                                const requestOptions = {
+                                  method: "POST",
+                                  headers: myHeaders,
+                                  body: raw,
+                                  redirect: "follow"
+                                };
+                                
+                                fetch("https://qkonnect.io/api/getContactName.php", requestOptions)
+                                  .then((response) => response.json())
+                                  .then((result) => {
+                                        console.log(result, "get Call no")
+                                        if(result.status == "200" && result?.data?.caller_name){
+                                            document.getElementById("contact-name").innerText = result?.data?.caller_name;
+                                        }else{
+                                            document.getElementById("contact-name").innerText = 'Unknown';
+                                        }
+                                    })
+                                  .catch((error) => console.error(error));
+                            }else{
+                                args = {
+                                    apexClass: 'GetRecordId',
+                                    methodName: 'getAccountId',
+                                    methodParams: 'phoneNumber='+String(sRemoteNumber).slice(-10),
+                                    callback: function(result) {
+                                        if (result.success) {
+                                            console.log('Result Incoming GetRecordId : ',result)
+                                            console.log('Result: ',JSON.parse(result.returnValue.runApex).id);
+                                            let rcrdId = JSON.parse(result.returnValue.runApex).id;
+                                            idOfObject = JSON.parse(result.returnValue.runApex).id;
+                                            document.getElementById("contact-name").innerText = JSON.parse(result.returnValue.runApex).name != "" ? JSON.parse(result.returnValue.runApex).name : "Unknown";
+                                            sforce.opencti.screenPop({
+                                            type: sforce.opencti.SCREENPOP_TYPE.SOBJECT,
+                                            params: {
+                                                        recordId: rcrdId
+                                                    }
+                                            });
+                    
+                                            
+                                            
+                                        } else {
+                                            console.log('ResultError : ',result.errors);
+                                        }
                                     }
-                                }
-                            };
-                            // Call APEX Class to get
-                            sforce.opencti.runApex(args)
+                                };
+                                // Call APEX Class to get
+                                sforce.opencti.runApex(args)
+                            }
+                            
                             callType = "Incoming";
                             document.getElementById("contact-number").innerText = String(sRemoteNumber).slice(-10);
                             document.getElementById("dialed-number").value = String(sRemoteNumber).slice(-10);
@@ -2084,12 +2139,6 @@
                         }
                         
                         if((callInitStatus == "Call" || callInitStatus == "Ringing") && e.type == "terminated"){
-                            setTimeout(()=>{
-                                authUser("1", "0");
-                            }, 1000);
-                        }
-
-                        if(fromPlatform == "qkonnect") {
                             setTimeout(()=>{
                                 authUser("1", "0");
                             }, 1000);
@@ -2358,33 +2407,62 @@
             let phoneNumber = document.querySelector("#dialed-number").value;
             document.querySelector("#caller-number").value = phoneNumber;
 
-            args = {
-                apexClass: 'GetRecordId',
-                methodName: 'getAccountId',
-                methodParams: 'phoneNumber='+phoneNumber,
-                callback: function(result) {
-                    if (result.success) {
-                        console.log('Result Dialed GetRecordId : ',result)
-                        console.log('Result: ',JSON.parse(result.returnValue.runApex).id);
-                        let rcrdId = JSON.parse(result.returnValue.runApex).id;
-                        idOfObject = JSON.parse(result.returnValue.runApex).id;
-                        document.getElementById("contact-name").innerText = JSON.parse(result.returnValue.runApex).name != "" ? JSON.parse(result.returnValue.runApex).name : "Unknown";
-                        sforce.opencti.screenPop({
-                        type: sforce.opencti.SCREENPOP_TYPE.SOBJECT,
-                        params: {
-                                    recordId: rcrdId
-                                }
-                        });
-
-                        
-                        
-                    } else {
-                        console.log('ResultError : ',result.errors);
+            if(fromPlatform == 'qkonnect'){
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                
+                const raw = JSON.stringify({
+                  "api_key": userAPIKey,
+                  "caller_number": phoneNumber
+                });
+                
+                const requestOptions = {
+                  method: "POST",
+                  headers: myHeaders,
+                  body: raw,
+                  redirect: "follow"
+                };
+                
+                fetch("https://qkonnect.io/api/getContactName.php", requestOptions)
+                  .then((response) => response.json())
+                  .then((result) => {
+                        console.log(result, "get Call no")
+                        if(result.status == "200" && result?.data?.caller_name){
+                            document.getElementById("contact-name").innerText = result?.data?.caller_name;
+                        }else{
+                            document.getElementById("contact-name").innerText = 'Unknown';
+                        }
+                    })
+                  .catch((error) => console.error(error));
+            }else{
+                args = {
+                    apexClass: 'GetRecordId',
+                    methodName: 'getAccountId',
+                    methodParams: 'phoneNumber='+phoneNumber,
+                    callback: function(result) {
+                        if (result.success) {
+                            console.log('Result Dialed GetRecordId : ',result)
+                            console.log('Result: ',JSON.parse(result.returnValue.runApex).id);
+                            let rcrdId = JSON.parse(result.returnValue.runApex).id;
+                            idOfObject = JSON.parse(result.returnValue.runApex).id;
+                            document.getElementById("contact-name").innerText = JSON.parse(result.returnValue.runApex).name != "" ? JSON.parse(result.returnValue.runApex).name : "Unknown";
+                            sforce.opencti.screenPop({
+                            type: sforce.opencti.SCREENPOP_TYPE.SOBJECT,
+                            params: {
+                                        recordId: rcrdId
+                                    }
+                            });
+    
+                            
+                            
+                        } else {
+                            console.log('ResultError : ',result.errors);
+                        }
                     }
-                }
-            };
-            // Call APEX Class to get
-            sforce.opencti.runApex(args)  
+                };
+                // Call APEX Class to get
+                sforce.opencti.runApex(args)  
+            }
 
             // console.log('call init')
             sipCall('call-audio', phoneNumber)
