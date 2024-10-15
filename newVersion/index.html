@@ -371,11 +371,13 @@
 
         var dialingNumber = urlParams.get('callerno');
         console.log('dialingNumber : ',dialingNumber);
-        if(dialingNumber && dialingNumber != null && dialingNumber != ''){
+        if(dialingNumber && dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
+            
             document.querySelector('.dial-pad').classList.remove('show')
             document.querySelector('.dial-pad').classList.add('hide')
 
-            document.querySelector(".left-pan").classList.add("active");
+            $(".left-pan").addClass("active");
+            $(".calling").fadeIn(100);
 
             checkProviders(userExtension, userAPIKey);
         }
@@ -2074,10 +2076,10 @@
                             authUser("1", "0");
 
                             if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
+                                DialPad.call();
                                 document.querySelector(".title").innerHTML = "Calling";
                                 document.querySelector("#dialed-number").value = dialingNumber;
                                 document.querySelector("#caller-number").value = dialingNumber;
-                                DialPad.call();
                                 sipCall('call-audio', dialingNumber);
                             }
                         }
