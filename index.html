@@ -433,8 +433,8 @@
                 .then((result) => {
                     console.log('provider result :',result)
                     agentDetail = result;
-                    stunServer = result?.ivr_details?.account_id == "619679" ? [{url:"stun:global.stun.twilio.com:3478"}] : [{url:"stun:stun.l.google.com:19302"}];
-                    credentialObj.expert_ice_servers = result?.ivr_details?.account_id == "619679" ? '[{"url":"stun:global.stun.twilio.com:3478"}]' : '[{"url":"stun:stun.l.google.com:19302"}]';;
+                    stunServer = result.ivr_details.account_id == "619679" ? [{url:"stun:global.stun.twilio.com:3478"}] : [{url:"stun:stun.l.google.com:19302"}];
+                    credentialObj.expert_ice_servers = result.ivr_details.account_id == "619679" ? '[{"url":"stun:global.stun.twilio.com:3478"}]' : '[{"url":"stun:stun.l.google.com:19302"}]';;
                     if(result.status == '200' && result.agent_call_status == "0" && result.agent_status == 'online'){
                         document.querySelector(".dial-pad").classList.add('show')
                         if(from == 'qkonnect'){
@@ -1629,6 +1629,10 @@
 
             callType = "";
             endCallTimer();
+
+            if(fromPlatform == 'qkonnect'){
+                authUser("1", "0");
+            }
 
             if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
                 console.log("c2cHangupedCall")
