@@ -824,7 +824,7 @@
         function getCallIdOfCallNumber(){
             return new Promise(async(resolve, reject) => {
                 try{
-                    const phoneNo = String(document.querySelector("#caller-number").value);
+                    const phoneNo = String(document.getElementById("dialed-number").value) || String(document.querySelector("#caller-number").value);
                     const data = JSON.stringify({
                         "api_key": userAPIKey,
                         "callerNumber": phoneNo
