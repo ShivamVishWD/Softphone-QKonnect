@@ -287,15 +287,7 @@
                 <div class="form-group mb-2">
                     <label for="call-was" class="form-label">Call was</label>
                     <select class="form-select" id="call-was" onchange="handleSelectChange()">
-                        <option value="Partial Response">Partial Response</option>
-                        <option value="Good Response">Good Response</option>
-                        <option value="Not Reachable">Not Reachable</option>
-                        <option value="Busy">Busy</option>
-                        <option value="Out of Service">Out of Service</option>
-                        <option value="Invalid Number">Invalid Number</option>
-                        <option value="Call Transferred">Call Transferred</option>
-                        <option value="Callback">Callback</option>
-                        <option value="Other">Other</option>
+                        
                     </select>
                 </div>
                 <div class="form-group mb-2" id="callback-input-box" style="display: none;">
@@ -723,7 +715,7 @@
                 document.getElementById("disposition-submit-btn").innerText = "Submit";
                 return;
             }
-            const callLog_CallID = await getCallIdOfCallNumber();
+            const callLog_CallID = await getCallIdOfCallNumber('disposition');
             console.log("callLog_CallID : ",callLog_CallID);
             if(fromPlatform == 'qkonnect') {
                 const myHeaders = new Headers();
@@ -821,10 +813,15 @@
             }
         }
 
-        function getCallIdOfCallNumber(){
+        function getCallIdOfCallNumber(idType = 'disposition'){
             return new Promise(async(resolve, reject) => {
                 try{
-                    const phoneNo = String(document.getElementById("dialed-number").value) || String(document.querySelector("#caller-number").value);
+                    let phoneNo = '';
+                    if(idType == 'disposition'){
+                        phoneNo = String(document.querySelector("#caller-number").value);
+                    }else{
+                        phoneNo = String(document.getElementById("dialed-number").value);
+                    }
                     const data = JSON.stringify({
                         "api_key": userAPIKey,
                         "callerNumber": phoneNo
@@ -2192,7 +2189,7 @@
                             getUsers();
 
                             setTimeout(() => {
-                                const call_uuid = getCallIdOfCallNumber().then(resp => {
+                                const call_uuid = getCallIdOfCallNumber('live').then(resp => {
                                     console.log("in Call uuid : ", resp);
                                 }).catch(err => {
                                     console.log("in call uuid catch err : ",err);
