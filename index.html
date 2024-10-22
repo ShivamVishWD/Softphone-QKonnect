@@ -433,8 +433,62 @@
                 .then((result) => {
                     console.log('provider result :',result)
                     agentDetail = result;
-                    stunServer = result.ivr_details.account_id == "619679" ? [{url:"stun:global.stun.twilio.com:3478"}] : [{url:"stun:stun.l.google.com:19302"}];
-                    credentialObj.expert_ice_servers = result.ivr_details.account_id == "619679" ? '[{"url":"stun:global.stun.twilio.com:3478"}]' : '[{"url":"stun:stun.l.google.com:19302"}]';
+                    if(result.ivr_details.user_id == "213670") {
+                        document.querySelector("#call-was").innerHTML = `<option value="Converted">Converted</option>
+                        <option value="Call Transferred">Call Transferred</option>
+                        <option value="Not Answered">Not Answered</option>
+                        <option value="Delivery Complaint">Delivery Complaint</option>
+                        <option value="Enquiry">Enquiry</option>
+                        <option value="Sample">Sample</option>
+                        <option value="General Inquiry -Retention">General Inquiry -Retention</option>
+                        <option value="Billing Complaints">Billing Complaints</option>
+                        <option value="Profile Updation">Profile Updation</option>
+                        <option value="Quality Complaint">Quality Complaint</option>
+                        <option value="Retained -Winback">Retained -Winback</option>
+                        <option value="Technical Issue (Application)">Technical Issue (Application)</option>
+                        <option value="Reschulding /Cancellation">Reschulding /Cancellation</option>
+                        <option value="Permanent Cancellation">Permanent Cancellation</option>`;
+                    }else if(result.ivr_details.user_id == "213656") {
+                        document.querySelector("#call-was").innerHTML = `<option value="Address Correction">Address Correction</option>
+                        <option value="Call Transferred">Call Transferred</option>
+                        <option value="Not Answered">Not Answered</option>
+                        <option value="Delivery Complaint">Delivery Complaint</option>
+                        <option value="Enquiry">Enquiry</option>
+                        <option value="Complain Regarding Product">Complain Regarding Product</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Billing Complaints">Billing Complaints</option>
+                        <option value="Delay Due to No Stock">Delay Due to No Stock</option>
+                        <option value="Quality Complaint">Quality Complaint</option>
+                        <option value="Refund Related">Refund Related</option>
+                        <option value="Technical Issue (Website)">Technical Issue (Website)</option>
+                        <option value="Reschulding/Cancellation">Reschulding/Cancellation</option>
+                        <option value="Permanent Cancellation">Permanent Cancellation</option>
+                        <option value="Reverse Pickup">Reverse Pickup</option>
+                        <option value="Product Correction">Product Correction</option>
+                        <option value="Mobile Number Correction">Mobile Number Correction</option>
+                        <option value="Product Not Received">Product Not Received</option>
+                        <option value="Offer Not Received">Offer Not Received</option>
+                        <option value="Enquiry about Product Specification">Enquiry about Product Specification</option>
+                        <option value="Abusive Caller">Abusive Caller</option>`;
+                    }else{
+                        document.querySelector("#call-was").innerHTML = `<option value="Partial Response">Partial Response</option>
+                        <option value="Good Response">Good Response</option>
+                        <option value="Not Reachable">Not Reachable</option>
+                        <option value="Busy">Busy</option>
+                        <option value="Out of Service">Out of Service</option>
+                        <option value="Invalid Number">Invalid Number</option>
+                        <option value="Call Transferred">Call Transferred</option>
+                        <option value="Callback">Callback</option>
+                        <option value="Other">Other</option>`;
+                    }
+                    // twillio stun - [{url:"stun:global.stun.twilio.com:3478"}]
+                    // google stun - [{url:"stun:stun.l.google.com:19302"}]
+                    // turn server - { url:'turn:zuqo@voiceuat.novofrontier.ai:3478', credential:'zuqo'}
+                    // stunServer = result.ivr_details.account_id == "619679" ? [{ url:'turn:zuqo@voiceuat.novofrontier.ai:3478', credential:'zuqo'}] : [{url:"stun:stun.l.google.com:19302"}];
+                    // credentialObj.expert_ice_servers = result.ivr_details.account_id == "619679" ? '[{ "url":"turn:zuqo@voiceuat.novofrontier.ai:3478", "credential":"zuqo"}]' : '[{"url":"stun:stun.l.google.com:19302"}]';;
+                    stunServer = [{url:"stun:stun.l.google.com:19302"}];
+                    credentialObj.expert_ice_servers = '[{"url":"stun:stun.l.google.com:19302"}]';
+                    console.log('stun server : ', stunServer);
                     if(result.status == '200' && result.agent_call_status == "0" && result.agent_status == 'online'){
                         document.querySelector(".dial-pad").classList.add('show')
                         if(from == 'qkonnect'){
@@ -596,6 +650,10 @@
         }
 
         document.getElementById("open-dialepad-btn").addEventListener("click", ()=>{
+            document.querySelector("#call-desc").value = "";
+            document.getElementById("disposition-submit-btn").disabled = false;
+            document.getElementById("disposition-submit-btn").innerText = "Submit";
+
             document.querySelector(".dispotition").classList.remove("show")
             document.querySelector(".dispotition").classList.add("hide")
 
@@ -667,32 +725,70 @@
             }
             const callLog_CallID = await getCallIdOfCallNumber();
             console.log("callLog_CallID : ",callLog_CallID);
-            const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
-            console.log(params, 'params disposition');
-            args = {
-                apexClass: 'QKonnectCTI.CreateCallLog',
-                methodName: 'insertUpdateCallLog',
-                methodParams: `body=${JSON.stringify(params)}`,
-                callback: function(result) {
-                    if (result.success) {
-                        console.log('Result Disposition: ',result);
-                        document.querySelector("#call-desc").value = "";
-                        document.getElementById("disposition-submit-btn").disabled = false;
-                        document.getElementById("disposition-submit-btn").innerText = "Submit";
-                        if(document.querySelector("#call-was").value == "Callback"){
-                            callBackDisposition();
-                        }
-                        authUser("1", "0");
-                        showDialer("");
-                    } else {
-                        console.log('ResultError Extension: ',result.errors);
-                        document.getElementById("disposition-submit-btn").disabled = false;
-                        document.getElementById("disposition-submit-btn").innerText = "Submit";
+            if(fromPlatform == 'qkonnect') {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                const callerNo = document.querySelector("#caller-number").value;
+
+                const raw = JSON.stringify({
+                "api_key": userAPIKey,
+                "call_uid": callLog_CallID,
+                "caller": callerNo,
+                "note": document.querySelector("#call-was").value + " - " +document.querySelector("#call-desc").value,
+                "agent_name": agentDetail.agent_name
+                });
+                console.log("disposition body : ",raw)
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+                };
+
+                fetch("https://qkonnect.io/api/postNotesSoftphone.php", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log(result, 'disposition qkonnect result')
+                    document.querySelector("#call-desc").value = "";
+                    document.getElementById("disposition-submit-btn").disabled = false;
+                    document.getElementById("disposition-submit-btn").innerText = "Submit";
+                    if(document.querySelector("#call-was").value == "Callback"){
+                        callBackDisposition();
                     }
-                }
-            };
-            // Call APEX Class to get
-            sforce.opencti.runApex(args) 
+                    authUser("1", "0");
+                    showDialer("");
+                })
+                .catch((error) => console.error(error));
+            }else {
+                const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
+                console.log(params, 'params disposition');
+                args = {
+                    apexClass: 'QKonnectCTI.CreateCallLog',
+                    methodName: 'insertUpdateCallLog',
+                    methodParams: `body=${JSON.stringify(params)}`,
+                    callback: function(result) {
+                        if (result.success) {
+                            console.log('Result Disposition: ',result);
+                            document.querySelector("#call-desc").value = "";
+                            document.getElementById("disposition-submit-btn").disabled = false;
+                            document.getElementById("disposition-submit-btn").innerText = "Submit";
+                            if(document.querySelector("#call-was").value == "Callback"){
+                                callBackDisposition();
+                            }
+                            authUser("1", "0");
+                            showDialer("");
+                        } else {
+                            console.log('ResultError Extension: ',result.errors);
+                            document.getElementById("disposition-submit-btn").disabled = false;
+                            document.getElementById("disposition-submit-btn").innerText = "Submit";
+                        }
+                    }
+                };
+                // Call APEX Class to get
+                sforce.opencti.runApex(args) 
+            }
+            
         }
 
         async function callBackDisposition(){
@@ -1630,10 +1726,6 @@
             callType = "";
             endCallTimer();
 
-            if(fromPlatform == 'qkonnect'){
-                authUser("1", "0");
-            }
-
             if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
                 console.log("c2cHangupedCall")
             }
@@ -2098,6 +2190,14 @@
                             document.querySelector("#hold-btn").disabled = false;
                             document.querySelector("#mute-btn").disabled = false;
                             getUsers();
+
+                            setTimeout(() => {
+                                const call_uuid = getCallIdOfCallNumber().then(resp => {
+                                    console.log("in Call uuid : ", resp);
+                                }).catch(err => {
+                                    console.log("in call uuid catch err : ",err);
+                                });
+                            }, 3000);
                         }
                         args = {
                             callback: function(result) {
