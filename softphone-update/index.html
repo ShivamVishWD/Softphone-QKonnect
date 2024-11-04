@@ -109,7 +109,7 @@
                     <img src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" alt="">
                 </div>
                 <div class="name rubberBand animated" id="contact-name">Unknown</div>
-                <div class="number" id="contact-number"></div>
+                <input type="text" class="number" id="contact-number" readonly>
                 <div class="call-connected-options hide">
                     <button class="hold-btn action-btn" id="hold-btn" onclick="sipToggleHoldResume()" disabled="true" title="Hold/Unhold">
                         <img src="./assets/images/pause-call.png" alt="Call-Hold">
@@ -129,7 +129,6 @@
                     <div style="margin-top: 6px; margin-bottom: 4px;">
                         <button onclick="showCallDivert('transfer')" class="call-divert-btn active" id="call-transfer-tab">Call Transfer</button>
                         <button onclick="showCallDivert('conferance')" class="call-divert-btn" id="call-conferance-tab">Call Conference</button>
-                        <button onclick="showCallDivert('dtmf-transfer')" class="call-divert-btn" id="call-dtmf-tab">DTMF Transfer</button>
                     </div>
                     <div class="dialpad-call" id="call-transfer-section" style="margin-top: 10px;">
                         <label style="margin-bottom: 0.5px; font-size: 12px">Select Agent for Call Transfer</label>
@@ -139,43 +138,37 @@
                             </select>
                             <button onclick="getUsers()"><i class="fa fa-refresh"></i></button>
                         </div>
-                        <button type="button" onclick="callTransfer('transfer')" class="action-click-btn" style="margin-top: 8px;">Transfer</button>
+                        <button type="button" onclick="handleCallTransfer('transfer')" class="action-click-btn" style="margin-top: 8px;">Transfer</button>
                     </div>
                     <div class="dialpad-call" id="call-conferance-section" style="margin-top: 10px; display: none;">
                         <label style="margin-bottom: 0.5px; font-size: 12px">Select Agents for Conference</label>
-                        <select name="agents-for-conferance" id="agents-for-conferance" style="font-size: 14px;" multiple>
-                            <option value="">--Select Agent--</option>
-                        </select>
-                        <button type="button" onclick="callTransfer('conferance')" class="action-click-btn" style="margin-top: 8px;">Conference</button>
-                    </div>
-                    <center>
-                        <div class="dialpad-call" id="call-dtmf-section" style="width:250; height:240; display: none;">
-                            <table class="dtmf-keypad-table">
-                                <tr><td><input type="button" style="width: 33%" class="btn" value="1" onclick="sipSendDTMF('1');" /><input type="button" style="width: 33%" class="btn" value="2" onclick="sipSendDTMF('2');" /><input type="button" style="width: 33%" class="btn" value="3" onclick="sipSendDTMF('3');" /></td></tr>
-                                <tr><td><input type="button" style="width: 33%" class="btn" value="4" onclick="sipSendDTMF('4');" /><input type="button" style="width: 33%" class="btn" value="5" onclick="sipSendDTMF('5');" /><input type="button" style="width: 33%" class="btn" value="6" onclick="sipSendDTMF('6');" /></td></tr>
-                                <tr><td><input type="button" style="width: 33%" class="btn" value="7" onclick="sipSendDTMF('7');" /><input type="button" style="width: 33%" class="btn" value="8" onclick="sipSendDTMF('8');" /><input type="button" style="width: 33%" class="btn" value="9" onclick="sipSendDTMF('9');" /></td></tr>
-                                <tr><td><input type="button" style="width: 33%" class="btn" value="*" onclick="sipSendDTMF('*');" /><input type="button" style="width: 33%" class="btn" value="0" onclick="sipSendDTMF('0');" /><input type="button" style="width: 33%" class="btn" value="#" onclick="sipSendDTMF('#');" /></td></tr>
-                            </table>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <select name="agents-for-conferance" id="agents-for-conferance" style="font-size: 14px;" multiple>
+                                <option value="">--Select Agent--</option>
+                            </select>
+                            <button onclick="getUsers()"><i class="fa fa-refresh"></i></button>
                         </div>
-                    </center>
+                        <button type="button" onclick="handleCallTransfer('conferance')" class="action-click-btn" style="margin-top: 8px;">Conference</button>
+                    </div>
                 </div>
                 <button onclick="newCase()" id="new-case-btn" class="action-click-btn" style="margin-top: 10px;">New Case</button>
             </div>
         </div>
         <div class="dial-pad hide">
-            <center><p id="alert-msg">Waiting for connection</p></center>
+            <center><label id="alert-msg">Waiting for connection</label><button class="free-btn hide" onclick="makeAgentFree()">I am free</button></center>
             <div class="agent-connect-status">
-                <select name="agent-status" id="agent-status" class="form-select" onchange="handleAgentStatus()">
-                    <option value="Online">Online</option>
+                <select name="agent-status" id="agent-status" class="form-select" onchange="handleAgentStatus(this)">
+                    <!-- <option value="Online">Online</option>
                     <option value="Away/Off-Line/Logged Out">Away/Off-Line/Logged Out</option>
                     <option value="Activity / Training">Activity / Training</option>
                     <option value="Bio-Break">Bio-Break</option>
                     <option value="Tea-Break">Tea-Break</option>
                     <option value="Lunch">Lunch</option>
-                    <option value="Meeting">Meeting</option>
+                    <option value="Meeting">Meeting</option> -->
                 </select>
             </div>
             <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number" onkeyup="checkNumber(event)">
+            <!-- <input type="text" class="form-control dial-screen" placeholder="Type Mobile no. here" id="dialed-number"> -->
             <div class="dial-table">
                 <div class="dial-table-row">
                     <div class="dial-table-col">
@@ -275,19 +268,13 @@
                     </div>
                 </div>
             </div>
-            <center style="margin-top: 5px;">
-                <p id="permissionStatus">Permission status will be displayed here.</p>
-                <button onclick="checkMicPermissions()">Check Permission</button>
-                <button onclick="requestMicrophonePermission()">Request Permission</button>
-            </center>
         </div>
         <div class="dispotition hide">
             <h4 class="text-center mb-3">Call End</h4>
             <form>
                 <div class="form-group mb-2">
-                    <label for="call-was" class="form-label">Call was</label>
+                    <label for="call-was" class="form-label">Call Disposition :</label>
                     <select class="form-select" id="call-was" onchange="handleSelectChange()">
-                        
                     </select>
                 </div>
                 <div class="form-group mb-2" id="callback-input-box" style="display: none;">
@@ -295,8 +282,8 @@
                     <input type="datetime-local" class="form-control" id="callback-datetime">
                 </div>
                 <div class="form-group mb-2">
-                    <label for="call-desc" class="form-label">Call Description <span style="color: red; font-weight: bold;">*<span style="font-size: 10px;">(Mendatory)</span></span></label>
-                    <textarea id="call-desc" cols="30" rows="5" class="form-control"></textarea>
+                    <label for="call-desc" class="form-label">Additional Note : <span style="color: red; font-weight: bold;">*<span style="font-size: 10px;">(Max - 240 Ch.)</span></span></label>
+                    <textarea id="call-desc" cols="30" rows="5" class="form-control" maxlength="240" minlength="10"></textarea>
                 </div>
                 <div class="form-group mb-2">
                     <input type="text" class="form-control" id="caller-number" readonly>
@@ -324,13 +311,11 @@
             expert_websocket_server_url: 'wss://rec3.qkonnect.io:7443',
             identity_impi: userExtension,
             expert_sip_outboundproxy_url: '',
-            // identity_impu: 'sip:53106@rec3.qkonnect.io',
             identity_impu: `sip:${userExtension}@rec3.qkonnect.io`,
             identity_display_name: userExtension,
             expert_disable_early_ims: 'false',
             expert_video_size: '',
             expert_enable_media_caching: 'false',
-            // expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"},{"urls":"turn:relay.backups.cz:3478","username":"webrtc","credential":"webrtc"}]',
             expert_ice_servers: '',
             expert_disable_callbtn_options: 'false',
             identity_realm: 'free',
@@ -345,7 +330,10 @@
         var callType = '';
         var timerInterval;
         var elapsedTime = 0; // in seconds
+        var getActiveAgentInterval;
         var stunServer = '';
+        var currentAgentStatus = '';
+        const softPhoneAlreadyOpenKey = "pageAlreadyOpen";
 
         var urlParams = new URLSearchParams(window.location.search);
         console.log("urlParams : ",urlParams);
@@ -363,8 +351,7 @@
 
         var dialingNumber = urlParams.get('callerno');
         console.log('dialingNumber : ',dialingNumber);
-        if(dialingNumber && dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
-            
+        if(dialingNumber && dialingNumber != null && dialingNumber != ''){
             document.querySelector('.dial-pad').classList.remove('show')
             document.querySelector('.dial-pad').classList.add('hide')
 
@@ -372,6 +359,9 @@
             $(".calling").fadeIn(100);
 
             checkProviders(userExtension, userAPIKey);
+            setTimeout(() => {
+                getBreakStatusOfAccount(userAPIKey);
+            }, 2000)
         }
 
         var hasApiKey = urlParams.has('apikey') && urlParams.get('apikey').trim() !== '';
@@ -385,7 +375,11 @@
         }
 
         if(hasApiKey && hasExtension && userExtension != null && userAPIKey != null){
+            document.querySelector("#new-case-btn").style.display = 'none';
             checkProviders(userExtension, userAPIKey);
+            setTimeout(() => {
+                getBreakStatusOfAccount(userAPIKey);
+            }, 2000)
         }
 
         var uiPlatform = urlParams.get('platform');
@@ -393,6 +387,23 @@
             document.getElementById("show-in-web").style.display = "none";
         }
 
+        function checkIfPageIsAlreadyOpen() {
+            if (localStorage.getItem(softPhoneAlreadyOpenKey)) {
+                // If the page is already open, redirect or alert the user
+                alert("This page is already open in another tab.");
+                window.close(); // Closes the tab if the browser allows it
+            } else {
+                // If not, mark the page as open
+                localStorage.setItem(softPhoneAlreadyOpenKey, "true");
+            }
+        }
+
+        window.addEventListener("beforeunload", () => {
+            localStorage.removeItem(softPhoneAlreadyOpenKey);
+        });
+
+        checkIfPageIsAlreadyOpen();
+        
         async function checkProviders(extension, apikey, from='salesforce', dialNumber=''){
             try{
 
@@ -420,11 +431,15 @@
                 redirect: "follow"
                 };
 
-                fetch("https://qkonnect.io/api/aashirwadSalesforceGetAgentStatus.php", requestOptions)
+                document.querySelector('.free-btn').classList.remove('show');
+                document.querySelector('.free-btn').classList.add('hide');
+
+                fetch("https://qkonnect.io/api/aashirwadSalesforceGetAgentStatus.php", requestOptions) //crm_status - active/unactive, call_status - in call/free
                 .then((response) => response.json())
                 .then((result) => {
                     console.log('provider result :',result)
                     agentDetail = result;
+                    currentAgentStatus = result.agent_status;
                     if(result.ivr_details.user_id == "213670") {
                         document.querySelector("#call-was").innerHTML = `<option value="Converted">Converted</option>
                         <option value="Call Transferred">Call Transferred</option>
@@ -466,8 +481,10 @@
                         document.querySelector("#call-was").innerHTML = `<option value="Partial Response">Partial Response</option>
                         <option value="Good Response">Good Response</option>
                         <option value="Not Reachable">Not Reachable</option>
+                        <option value="Switched Off">Switched Off</option>
                         <option value="Busy">Busy</option>
                         <option value="Out of Service">Out of Service</option>
+                        <option value="RNR">RNR</option>
                         <option value="Invalid Number">Invalid Number</option>
                         <option value="Call Transferred">Call Transferred</option>
                         <option value="Callback">Callback</option>
@@ -483,13 +500,15 @@
                     console.log('stun server : ', stunServer);
                     if(result.status == '200' && result.agent_call_status == "0" && result.agent_status == 'online'){
                         document.querySelector(".dial-pad").classList.add('show')
-                        if(from == 'qkonnect'){
-                            document.querySelector("#new-case-btn").style.display = 'none';
-                        }
                         setTimeout(()=>{
                             sipRegister();
-                            //getUsers();
+                            //getAgentsInterval();
                         }, 2000);
+                    }else if(result.status == '200' && result.agent_status == "offline") {
+                        document.getElementById("alert-msg").innerText = "Agent is "+result.agent_status;
+                        document.getElementById("alert-msg").style.color = "red";
+                        document.querySelector(".dial-pad").classList.add('show')
+                        document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
                     }else if(result.status == '200' && result.agent_call_status == "0" && result.agent_status != 'online' && from == 'qkonnect') {
                         document.getElementById("alert-msg").innerText = "Agent is "+result.agent_status;
                         document.getElementById("alert-msg").style.color = "red";
@@ -498,19 +517,22 @@
                     }else if(result.status == '200' && result.agent_call_status == "0" && result.agent_status != 'online' && from == 'salesforce') {
                         document.getElementById("alert-msg").innerText = "Agent is "+result.agent_status + ", retrying...";
                         document.querySelector(".dial-pad").classList.add('show');
-                        authUser("1", "0", true);
+                        authUser("1", "1", true);
                     }else if(result.status == '200' && result.agent_call_status == "1"){
                         document.getElementById("alert-msg").innerText = "Agent already on a call";
                         document.getElementById("alert-msg").style.color = "goldenrod";
                         document.querySelector(".dial-pad").classList.add('show')
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
+                        document.querySelector('.free-btn').classList.remove('hide');
+                        document.querySelector('.free-btn').classList.add('show');
+                        currentAgentStatus = 'offline';
                     }else if(from == 'qkonnect'){
                         document.querySelector(".dial-pad").classList.add('show');
                         document.getElementById("alert-msg").innerText = "Unable to connect, agent is "+result.agent_status;
                         document.getElementById("alert-msg").style.color = "red";
                         document.querySelector('.dial-key-wrap[data-key="call"]').setAttribute("data-key", "no-call");
                     }else if(from == 'salesforce'){
-                        authUser("1", "0", true);
+                        authUser("1", "1", true);
                     }
                 })
                 .catch((error) => {
@@ -521,6 +543,67 @@
             }catch(error){
                 console.log("Error Providers : ",error);
             }
+        }
+
+        function getBreakStatusOfAccount(apiKey) {
+
+            if(currentAgentStatus == "offline"){
+                const statusOption = `<option value="">--Update Active Status--</option><option value="1">Online</option>`;
+                document.querySelector("#agent-status").innerHTML = statusOption;
+            }else{
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+    
+                const raw = JSON.stringify({
+                    "api_key": apiKey
+                });
+    
+                console.log("break status body : ",raw);
+    
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+                };
+    
+                fetch("https://qkonnect.io/api/getBreakReasonList2.php", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log(result, 'get break status');
+                    if(result.status == "200" && result.break_reason_list.length > 0){
+                        let statusOption = `<option value="1">Online</option>`;
+                        for(let bStatus of result.break_reason_list){
+                            statusOption += `<option value="${bStatus.reason_id}">${bStatus.reason_name}</option>`;
+                        }
+    
+                        document.querySelector("#agent-status").innerHTML = statusOption;
+                    }else{
+                        const statusOption = `<option value="1">Online</option>
+                        <option value="0">Away/Off-Line/Logged Out</option>`;
+    
+                        document.querySelector("#agent-status").innerHTML = statusOption;
+                    }
+                })
+                .catch((error) => console.error(error));
+            }
+        }
+
+        function checkNumber(event){
+            let dialedNo = event.target.value;
+            // event.target.value = String(dialedNo).replace(/\D/g,'');
+            let matchRegex = /^(?:\+91|0)?[6-9]\d{9}$/;
+            if(!matchRegex.test(event.target.value)){
+                event.target.value = String(dialedNo).replace(/[^0-9+]/g, '')
+            }            
+        }
+
+        function formatNoForIVR(phoneNumber) {
+            // Remove +91 or 0 from the start of the phone number
+            const formattedNumber = phoneNumber.replace(/^(?:\+91|0)/, '');
+            console.log('formattedNumber : ', formattedNumber);
+            // Return the original and formatted number
+            return formattedNumber;
         }
 
         function setUnsetUserActive(logType = "login"){
@@ -542,18 +625,20 @@
 
         var idOfObject = '';
 
-        async function authUser(agentStatus = "0", agentCallStatus = "0", reconnect = false){
+        async function authUser(agentStatus = "0", agentStatusCode = "1", reconnect = false, updateStatus = false){
             try{
+
                 let status = document.getElementById("agent-status").value;
                 const obj={
                     "api_key": userAPIKey,
                     "extension": userExtension,
                     "crm_status": agentStatus,
-                    "agent_call_status": agentCallStatus,
-                    "crm_status_reason": agentStatus == "0" ? status : "",
+                    // "agent_call_status": agentCallStatus,
+                    // "crm_status_reason": agentStatus == "0" ? status : "",
+                    "crm_status_reason_id": agentStatusCode
                 }
                 console.log("Agent Status Log Object : ",obj);
-                let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus.php", {
+                let response = await fetch("https://qkonnect.io/api/aashirwadSalesforceAgentStatus2.php", {
                     method: "POST",
                     Headers: {
                         "Accept": '*/*',
@@ -567,28 +652,46 @@
                 response = await response.json();
                 console.log("response api : ",response)
 
-                const params = {Status__c: agentStatus == "1" ? "Online" : "Offline", Log_Description__c: ""};
+                if(response.status == "200" && agentStatus == "1"){
+                    sipRegister();
+                }else if(response.status == "200" && agentStatus == "0"){
+                    sipUnRegister();
+                }else{
+                    const msg = agentStatus == "1" ? "Unable to place Online" : "Unable to place Offline";
+                    document.getElementById("alert-msg").innerText = msg;
+                    document.getElementById("alert-msg").style.color = "grey";
+                }
 
-                args = {
-                    apexClass: 'AgentsActivity',
-                    methodName: 'logAgentStatus',
-                    methodParams: `body=${JSON.stringify(params)}`,
-                    callback: function(result) {
-                        if (result.success) {
-                            console.log('Result Agent Log: ',result);
-                        } else {
-                            console.log('ResultError Agent Status: ',result.errors);
+                if(response.status == "200") {
+
+                    const params = {Status__c: agentStatus == "1" ? "Online" : "Offline", Log_Description__c: ""};
+
+                    args = {
+                        apexClass: 'QKonnectCTI.AgentsActivity',
+                        methodName: 'logAgentStatus',
+                        methodParams: `body=${JSON.stringify(params)}`,
+                        callback: function(result) {
+                            if (result.success) {
+                                console.log('Result Agent Log: ',result);
+                            } else {
+                                console.log('ResultError Agent Status: ',result.errors);
+                            }
                         }
-                    }
-                };
-                // Call APEX Class to get
-                sforce.opencti.runApex(args) 
+                    };
+                    // Call APEX Class to get
+                    sforce.opencti.runApex(args) 
+                }
 
                 if(agentStatus == "1" && agentCallStatus == "0" && reconnect){
                     setTimeout(() => {
                         sipRegister();
                     }, 2000);
                 }
+
+                currentAgentStatus = agentStatus == "0" ? "offline" : "online";
+                setTimeout(() => {
+                    getBreakStatusOfAccount(userAPIKey);
+                }, 1000);
             }catch(error){
                 console.log("catch error : ",error)
             }
@@ -621,7 +724,9 @@
     
         document.querySelector("#pick-call").addEventListener("click", ()=>{
             let phoneNo = document.getElementById("dialed-number").value;
-            sipCall('call-audio',phoneNo);
+            const ivrPhoneNo = formatNoForIVR(phoneNo);
+            console.log("ivrPhoneNo : ",ivrPhoneNo);
+            sipCall('call-audio',ivrPhoneNo);
             document.querySelector(".title").innerHTML = "Connected";
             callRecieveBtns.classList.add("hide")
             callRecieveBtns.classList.remove("show")
@@ -655,7 +760,7 @@
             document.querySelector("#callback-datetime").value = "";
             document.querySelector("#call-desc").value = "";
 
-            authUser("1", "0");
+            authUser("1", "1");
         })
 
         function generateRandomWithDatetime(n) {
@@ -674,18 +779,17 @@
             console.log(data);
         });
 
-        async function handleAgentStatus(){
-            let status = document.getElementById("agent-status").value;
+        async function handleAgentStatus(sel){
+            let status = sel.options[sel.selectedIndex].text;
+            let statusCode = document.getElementById("agent-status").value;
 
             if(status == "Online"){
                 console.log('sipRegister called');
-                authUser("1", "0", true);
+                authUser("1", statusCode, true, true);
                 callInitStatus = "Nothing";
-                sipRegister();
             }else{
-                authUser("0", "0");
+                authUser("0", statusCode, false, true);
                 console.log('sipUnRegister called');
-                sipUnRegister();
             }
         }
 
@@ -715,48 +819,50 @@
                 document.getElementById("disposition-submit-btn").innerText = "Submit";
                 return;
             }
-            const callLog_CallID = await getCallIdOfCallNumber('disposition');
+            const callLog_CallID = await getCallIdOfCallNumber();
             console.log("callLog_CallID : ",callLog_CallID);
-            if(fromPlatform == 'qkonnect') {
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
+            //if(fromPlatform == 'qkonnect') {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
-                const callerNo = document.querySelector("#caller-number").value;
+            const callerNo = document.querySelector("#caller-number").value;
+            const ivrPhoneNo = formatNoForIVR(callerNo);
+            const raw = JSON.stringify({
+            "api_key": userAPIKey,
+            "call_uid": callLog_CallID,
+            "caller": ivrPhoneNo,
+            "note": document.querySelector("#call-was").value + " - " +document.querySelector("#call-desc").value,
+            "agent_name": agentDetail.agent_name,
+            "extension": userExtension
+            });
+            console.log("disposition body : ",raw)
+            const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+            };
 
-                const raw = JSON.stringify({
-                "api_key": userAPIKey,
-                "call_uid": callLog_CallID,
-                "caller": callerNo,
-                "note": document.querySelector("#call-was").value + " - " +document.querySelector("#call-desc").value,
-                "agent_name": agentDetail.agent_name
-                });
-                console.log("disposition body : ",raw)
-                const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-                };
-
-                fetch("https://qkonnect.io/api/postNotesSoftphone.php", requestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    console.log(result, 'disposition qkonnect result')
-                    document.querySelector("#call-desc").value = "";
-                    document.getElementById("disposition-submit-btn").disabled = false;
-                    document.getElementById("disposition-submit-btn").innerText = "Submit";
-                    if(document.querySelector("#call-was").value == "Callback"){
-                        callBackDisposition();
-                    }
-                    authUser("1", "0");
-                    showDialer("");
-                })
-                .catch((error) => console.error(error));
-            }else {
+            fetch("https://qkonnect.io/api/postNotesSoftphone2.php", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result, 'disposition qkonnect result')
+                document.querySelector("#call-desc").value = "";
+                document.getElementById("disposition-submit-btn").disabled = false;
+                document.getElementById("disposition-submit-btn").innerText = "Submit";
+                if(document.querySelector("#call-was").value == "Callback"){
+                    callBackDisposition();
+                }
+                // authUser("1", "0");
+                showDialer("");
+            })
+            .catch((error) => console.error(error));
+            // }else {
+            if(fromPlatform == "salesforce"){
                 const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
                 console.log(params, 'params disposition');
                 args = {
-                    apexClass: 'CreateCallLog',
+                    apexClass: 'QKonnectCTI.CreateCallLog',
                     methodName: 'insertUpdateCallLog',
                     methodParams: `body=${JSON.stringify(params)}`,
                     callback: function(result) {
@@ -768,7 +874,7 @@
                             if(document.querySelector("#call-was").value == "Callback"){
                                 callBackDisposition();
                             }
-                            authUser("1", "0");
+                            // authUser("1", "0");
                             showDialer("");
                         } else {
                             console.log('ResultError Extension: ',result.errors);
@@ -813,18 +919,14 @@
             }
         }
 
-        function getCallIdOfCallNumber(idType = 'disposition'){
+        function getCallIdOfCallNumber(){
             return new Promise(async(resolve, reject) => {
                 try{
-                    let phoneNo = '';
-                    if(idType == 'disposition'){
-                        phoneNo = String(document.querySelector("#caller-number").value);
-                    }else{
-                        phoneNo = String(document.getElementById("dialed-number").value);
-                    }
+                    const phoneNo = String(document.querySelector("#caller-number").value);
+                    const ivrPhoneNo = formatNoForIVR(phoneNo);
                     const data = JSON.stringify({
                         "api_key": userAPIKey,
-                        "callerNumber": phoneNo
+                        "callerNumber": ivrPhoneNo
                     });
 
                     const requestOptions = {
@@ -858,71 +960,23 @@
                     resolve(generateCustomCallId());
                 }
             })
-        }
-
-        function checkNumber(event){
-            let dialedNo = event.target.value;
-            event.target.value = String(dialedNo).replace(/\D/g,'');
-
-            if(String(dialedNo).length > 10){
-                event.target.value = String(dialedNo).substring(0, 10);
-            }
-            
-        }
+        }                    
 
         function showCallDivert(showType){
             console.log(showType, 'show type')
             if(showType == 'transfer'){
                 document.querySelector("#call-conferance-section").style.display = "none";
-                document.querySelector("#call-dtmf-section").style.display = "none";
                 document.querySelector("#call-transfer-section").style.display = "block";
                 document.querySelector("#call-conferance-tab").classList.remove('active');
-                document.querySelector('#call-dtmf-tab').classList.remove('active');
                 document.querySelector("#call-transfer-tab").classList.add('active');
-                getUsers();
+                getAgentsInterval();
             }else if(showType == 'conferance'){
                 document.querySelector("#call-transfer-section").style.display = "none";
-                document.querySelector("#call-dtmf-section").style.display = "none";
                 document.querySelector("#call-conferance-section").style.display = "block";
                 document.querySelector("#call-transfer-tab").classList.remove('active');
-                document.querySelector('#call-dtmf-tab').classList.remove('active');
                 document.querySelector("#call-conferance-tab").classList.add('active');
-                getUsers();
-            }else if(showType == 'dtmf-transfer'){
-                document.querySelector("#call-transfer-section").style.display = "none";
-                document.querySelector("#call-conferance-section").style.display = "none";
-                document.querySelector("#call-dtmf-section").style.display = "block";
-                document.querySelector("#call-transfer-tab").classList.remove('active');
-                document.querySelector("#call-conferance-tab").classList.remove('active');
-                document.querySelector('#call-dtmf-tab').classList.add('active');
+                getAgentsInterval();
             }
-        }
-
-        function checkMicPermissions() {
-            navigator.permissions.query({ name: 'microphone' })
-            .then(function(permissionStatus) {
-                document.getElementById('permissionStatus').innerText = `Microphone and Sound permission: ${permissionStatus.state}`;
-            })
-            .catch(function(err) {
-                console.error('Error checking microphone permission:', err);
-            });
-        }
-
-        function requestMicrophonePermission() {
-            navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-            .then(function(stream) {
-                document.getElementById('permissionStatus').innerText = "Microphone and Sound access granted!";
-                // Stop the stream to release resources
-                stream.getTracks().forEach(track => track.stop());
-            })
-            .catch(function(err) {
-                let errorMessage = `Microphone permission denied: ${err.name}`;
-                if (err.name === 'NotAllowedError') {
-                    errorMessage += " - Permission might be denied due to HTTPS requirements or browser settings.";
-                }
-                document.getElementById('permissionStatus').innerText = errorMessage;
-                console.error('Error requesting microphone permission:', err);
-            });
         }
 
         // Format the time in HH:MM:SS
@@ -968,6 +1022,37 @@
             console.log('Call ended');
         }
 
+        async function makeAgentFree() {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            
+            const raw = JSON.stringify({
+              "api_key": userAPIKey,
+              "extension": userExtension
+            });
+            
+            console.log('body for free : ', raw);
+            const requestOptions = {
+              method: "POST",
+              headers: myHeaders,
+              body: raw,
+              redirect: "follow"
+            };
+            
+            fetch("https://qkonnect.io/api/freeagentcallstatus2.php", requestOptions)
+              .then((response) => response.json())
+              .then((result) => {
+                console.log(result, 'free put response');
+                if(result.status == '200'){
+                    document.querySelector('.free-btn').classList.remove('show');
+                    document.querySelector('.free-btn').classList.add('hide');
+                    authUser("1", "1");
+                    currentAgentStatus = 'online';
+                    getBreakStatusOfAccount(userAPIKey)
+                }
+            })
+              .catch((error) => console.error(error));
+        }
 
     </script>
     <script src="https://quadraforttechnologies-4c-dev-ed.lightning.force.com/support/api/56.0/interaction.js" type="text/javascript"></script>
@@ -982,7 +1067,7 @@
         sforce.opencti.enableClickToDial(args)
         */
         args = {
-            apexClass: 'GetUserInfo',
+            apexClass: 'QKonnectCTI.GetUserInfo',
             methodName: 'getExtension',
             methodParams: '',
             callback: function(result) {
@@ -991,12 +1076,15 @@
                     userExtension = result.returnValue.runApex;
                     userExtension = userExtension != null ? userExtension.trim() : '';
                     checkProviders(userExtension, userAPIKey, 'salesforce');
+                    setTimeout(() => {
+                        getBreakStatusOfAccount(userAPIKey);
+                    }, 2000)
                     /*
                     credentialObj.identity_impi = userExtension;
                     credentialObj.identity_display_name = userExtension;
                     credentialObj.identity_impu = `sip:${userExtension}@rec3.qkonnect.io`;
                     //authUser();
-                    getUsers();
+                    getAgentsInterval();
                     setTimeout(()=>{
                         sipRegister();
                     }, 2000);
@@ -1009,6 +1097,22 @@
         // Call APEX Class to get
         sforce.opencti.runApex(args) 
 
+
+        function getAgentsInterval() {
+            getUsers();
+
+            getActiveAgentInterval = setInterval(() => {
+                getUsers();
+            }, 7000)
+        }
+
+        function clearGetAgentsWithInFiveSecond() {
+            if(getActiveAgentInterval){
+                clearInterval(getActiveAgentInterval);
+            }
+            document.querySelector("#agents-for-transfer").innerHTML = "<option>--Getting Agents--</option>";
+            document.querySelector('#agents-for-conferance').innerHTML = "<option>--Getting Agents--</option>";
+        }
 
         async function getUsers(){
 
@@ -1025,7 +1129,91 @@
                 body: raw,
                 redirect: "follow",
             };
+            
+            fetch("https://qkonnect.io/api/getActiveAgentList.php", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result, "extension api response");
 
+                if (result.status === "200" && result.active_agent_list.length > 0) {
+                    // Sort the agents first by availability (crm_status and call_status), then by name
+                    result.active_agent_list.sort((a, b) => {
+                        // First sort by status (available, busy, offline)
+                        if (a.crm_status === "1" && a.call_status === "0") return -1;
+                        if (b.crm_status === "1" && b.call_status === "0") return 1;
+                        if (a.crm_status === "1" && a.call_status === "1") return 0;
+                        if (a.crm_status === "0") return 1;
+                        if (b.crm_status === "0") return -1;
+
+                        // If statuses are the same, sort alphabetically by agent_name
+                        return a.agent_name.localeCompare(b.agent_name);
+                    });
+
+                    let optionTransfer = '<option value="">--Select Agent--</option>';
+                    let optionConference = '<option value="">--Select Agent--</option>';
+
+                    // Object to group agents by departments
+                    const departmentGroups = {};
+                    // List to store agents with null departments for 'No Department' optgroup
+                    let noDepartmentGroup = '';
+
+                    // Iterate through each agent and group them by departments
+                    result.active_agent_list.forEach((item) => {
+                        // Skip if the agent extension matches userExtension
+                        if (String(item.extension) !== String(userExtension)) {
+                            const status = item.crm_status === "1" && item.call_status === "0" 
+                                ? '(Available)' 
+                                : item.crm_status === "1" && item.call_status === "1" 
+                                ? '(Busy)' 
+                                : '(Offline)';
+
+                            const isDisable = item.call_status === "1" || item.crm_status === "0" ? 'disabled' : '';
+
+                            const agentOption = `
+                                <option style="display: flex; justify-content: space-between; align-items: center;" value="${item.extension}" ${isDisable}>
+                                    <label style="font-weight: 500;">${item.extension} - ${item.agent_name}</label> ${status}
+                                </option>`;
+
+                            // Check if the agent has a department or not
+                            const departments = item.department;
+                            if (departments) {
+                                // Group by departments
+                                Object.entries(departments).forEach(([key, departmentName]) => {
+                                    if (!departmentGroups[departmentName]) {
+                                        departmentGroups[departmentName] = [];
+                                    }
+                                    departmentGroups[departmentName].push(agentOption);
+                                });
+                            } else {
+                                // Add agent option to 'No Department' group
+                                noDepartmentGroup += agentOption;
+                            }
+                        }
+                    });
+
+                    // Iterate over department groups to generate optgroups
+                    for (const [departmentName, agents] of Object.entries(departmentGroups)) {
+                        // Create optgroup for each department
+                        const optgroup = `<optgroup label="${departmentName}">${agents.join('')}</optgroup>`;
+                        optionTransfer += optgroup;
+                        optionConference += optgroup;
+                    }
+
+                    // Add 'No Department' optgroup if there are agents without departments
+                    if (noDepartmentGroup) {
+                        const noDepartmentOptgroup = `<optgroup label="No Department">${noDepartmentGroup}</optgroup>`;
+                        optionTransfer += noDepartmentOptgroup;
+                        optionConference += noDepartmentOptgroup;
+                    }
+
+                    // Populate both transfer and conference dropdowns
+                    document.querySelector("#agents-for-transfer").innerHTML = optionTransfer;
+                    document.querySelector('#agents-for-conferance').innerHTML = optionConference;
+                }
+            })
+            .catch((error) => console.error(error));
+
+            /*
             fetch("https://qkonnect.io/api/getActiveAgentList.php", requestOptions)
             .then((response) => response.json())
             .then((result) => {
@@ -1040,7 +1228,7 @@
                     for(let item of result.active_agent_list){
                         if(String(item.extension) != String(userExtension)){
                             const status = item.crm_status == "1" && item.call_status == "0" ? '(Available)' : item.crm_status == "1" && item.call_status == "1" ? '(Busy)' : '(Offline)';
-                            const isDisable = (item.crm_status == "1" && item.call_status == "1") || item.crm_status == "0" && 'disabled';
+                            const isDisable = item.call_status == "1" || item.crm_status == "0" && 'disabled';
                             option += `<option style="display: flex; justify-content: space-between; align-items: center;" value="${item.extension}" ${isDisable}><label style="font-weight: 500;">${item.extension} - ${item.agent_name}</label> ${status}</option>`
                         }
                     }
@@ -1049,6 +1237,7 @@
                 }
             })
             .catch((error) => console.error(error));
+            */
             /*
             if(getExtension && getExtension != null && getExtension != ''){
                 
@@ -1085,7 +1274,7 @@
             }else{
 
                 args = {
-                    apexClass: 'GetAllUsers',
+                    apexClass: 'QKonnectCTI.GetAllUsers',
                     methodName: 'getUsersHaveExtension',
                     methodParams: '',
                     callback: function(result) {
@@ -1126,7 +1315,7 @@
             credentialObj.identity_impu = `sip:${getExtension}@rec3.qkonnect.io`;
             document.querySelector("#new-case-btn").style.display = 'none';
             // authUser();
-            getUsers();
+            getAgentsInterval();
             setTimeout(()=>{
                 sipRegister();
             }, 2000);
@@ -1139,10 +1328,10 @@
                 console.log("result nbew  :",result.number);    
                 if(result && Object.keys(result).length > 0){
                     document.querySelector(".title").innerHTML = "Calling";
-                    document.getElementById("contact-number").innerText = result?.number;
-                    document.getElementById("contact-name").innerText = result?.recordName;
-                    document.getElementById("dialed-number").value = result?.number;
-                    document.getElementById("caller-number").value = result?.number;
+                    document.getElementById("contact-number").value = result.number;
+                    document.getElementById("contact-name").innerText = result.recordName;
+                    document.getElementById("dialed-number").value = result.number;
+                    document.getElementById("caller-number").value = result.number;
     
                     callRecieveBtns.classList.add("hide")
                     callRecieveBtns.classList.remove("show")
@@ -1150,7 +1339,10 @@
                     hangupBtn.classList.remove("hide")
                     hangupBtn.classList.add("show")
                     DialPad.call();
-                    sipCall("call-audio", result?.number)
+                    const ivrPhoneNo = formatNoForIVR(result.number)
+                    console.log("ivrPhoneNo : ",ivrPhoneNo);
+                    // sipCall("call-audio", ivrPhoneNo)
+                    sipCall("call-audio", ivrPhoneNo)
                 }
                 args = {
                     visible: true,
@@ -1166,7 +1358,7 @@
                 
                 
                 args = {
-                    apexClass: 'GetRecordId',
+                    apexClass: 'QKonnectCTI.GetRecordId',
                     methodName: 'getAccountId',
                     methodParams: 'phoneNumber='+result.number,
                     callback: function(result) {
@@ -1528,6 +1720,7 @@
     
         // makes a call (SIP INVITE)
         function sipCall(s_type, phone_number='') {
+            console.log("sipcall phone no : ",phone_number);
             if (oSipStack && !oSipSessionCall && !tsk_string_is_null_or_empty(phone_number)) {
                 if (s_type == 'call-screenshare') {
                     if (!SIPml.isScreenShareSupported()) {
@@ -1554,6 +1747,7 @@
     
                 // create call session
                 oSipSessionCall = oSipStack.newSession(s_type, oConfigCall);
+                console.log("oSipSessionCall calling : ", oSipSessionCall);
                 // make call
                 if (oSipSessionCall.call(phone_number) != 0) {
                     oSipSessionCall = null;
@@ -1626,6 +1820,7 @@
     
         // holds or resumes the call
         function sipToggleHoldResume() {
+            console.log('oSipSessionCall : ',oSipSessionCall);
             if (oSipSessionCall) {
                 var i_ret;
                 console.log(oSipSessionCall.bHeld, 'oSipSessionCall.bHeld');
@@ -1634,7 +1829,7 @@
                 i_ret = oSipSessionCall.bHeld ? oSipSessionCall.resume() : oSipSessionCall.hold();
                 console.log('i_ret : ',i_ret)
                 if (i_ret != 0) {
-                    document.querySelector(".title").innerHTML
+                    //document.querySelector(".title").innerHTML
                   //  txtCallStatus.innerHTML = '<i>Hold / Resume failed</i>';
                   //  btnHoldResume.disabled = false;
                     return;
@@ -1672,17 +1867,17 @@
                 oSipSessionCall.hangup({ events_listener: { events: '*', listener: onSipEventSession } });
             }
             console.log("callInitStatus : ",callInitStatus)
-            if(callInitStatus == "Connected"){
-                callInitStatus = "Call";
-                document.querySelector(".title").innerHTML = "Calling";
-                if(!dialingNumber){
-                    document.querySelector(".dial-pad").classList.remove("show")
-                    document.querySelector(".dial-pad").classList.add("hide")
+            // if(callInitStatus == "Connected"){
+            callInitStatus = "Call";
+            document.querySelector(".title").innerHTML = "Calling";
+            if(!dialingNumber){
+                document.querySelector(".dial-pad").classList.remove("show")
+                document.querySelector(".dial-pad").classList.add("hide")
 
-                    document.querySelector(".dispotition").classList.add("show")
-                    document.querySelector(".dispotition").classList.remove("hide")
-                }
-
+                document.querySelector(".dispotition").classList.add("show")
+                document.querySelector(".dispotition").classList.remove("hide")
+            }
+/*
             }else if(callInitStatus == "Ringing"){
                 callInitStatus = "Call";
                 document.querySelector(".title").innerHTML = "Calling";
@@ -1694,11 +1889,12 @@
                     document.querySelector(".dispotition").classList.add("hide")
                 }
             }
-
+*/
+            /*
             var urlParams = new URLSearchParams(window.location.search);
             console.log("urlParams : ",urlParams)
             var getExtension = urlParams.get('extension');
-            /*
+
             if(getExtension && getExtension != null && getExtension != ''){
                 document.querySelector(".dispotition").classList.remove("show")
                 document.querySelector(".dispotition").classList.add("hide")
@@ -1711,7 +1907,7 @@
             $(".left-pan").removeClass("active");
             $(".calling").fadeOut(100);
             $(".calling .name").html("Unknown");
-            $(".calling .number").html("");
+            $(".calling .number").val("");
 
             document.querySelector(".call-connected-options").classList.remove("show");
             document.querySelector(".call-connected-options").classList.add("hide");
@@ -1722,10 +1918,15 @@
 
             callType = "";
             endCallTimer();
+            clearGetAgentsWithInFiveSecond();
 
             if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
                 console.log("c2cHangupedCall")
             }
+
+            setTimeout(()=>{
+                authUser("1", "1");
+            }, 70000);
         }
     
         function sipSendDTMF(c) {
@@ -2008,7 +2209,10 @@
                         if(e.type == "stopped"){
                             document.getElementById("alert-msg").innerText = "Not Connected";
                             document.getElementById("alert-msg").style.color = "red";
-                            authUser("0", "0");
+                            sipHangUp();
+                            currentAgentStatus = 'offline';
+                            authUser("0", "1");
+                            getBreakStatusOfAccount(userAPIKey);
                         }
                         // divCallOptions.style.opacity = 0;
     
@@ -2069,7 +2273,7 @@
                                   .catch((error) => console.error(error));
                             }else{
                                 args = {
-                                    apexClass: 'GetRecordId',
+                                    apexClass: 'QKonnectCTI.GetRecordId',
                                     methodName: 'getAccountId',
                                     methodParams: 'phoneNumber='+String(sRemoteNumber).slice(-10),
                                     callback: function(result) {
@@ -2098,7 +2302,7 @@
                             }
                             
                             callType = "Incoming";
-                            document.getElementById("contact-number").innerText = String(sRemoteNumber).slice(-10);
+                            document.getElementById("contact-number").value = String(sRemoteNumber).slice(-10);
                             document.getElementById("dialed-number").value = String(sRemoteNumber).slice(-10);
                             
                             document.querySelector(".call-recieve").classList.remove("hide");
@@ -2113,7 +2317,7 @@
 
                             callInitStatus = "Ringing";
 
-                            authUser("1", "1");
+                            // authUser("1", "1");
     
                             DialPad.call();
                             args = {
@@ -2168,14 +2372,17 @@
                         if(callInitStatus == "Nothing" && e.type == "connected"){
                             document.getElementById("alert-msg").innerText = "Connected";
                             document.getElementById("alert-msg").style.color = "green";
-                            authUser("1", "0");
+                            // authUser("1", "0");
 
                             if(dialingNumber != null && dialingNumber != '' && dialingNumber.length == 10){
                                 DialPad.call();
                                 document.querySelector(".title").innerHTML = "Calling";
                                 document.querySelector("#dialed-number").value = dialingNumber;
                                 document.querySelector("#caller-number").value = dialingNumber;
-                                sipCall('call-audio', dialingNumber);
+                                const ivrPhoneNo = formatNoForIVR(dialingNumber);
+                                console.log("ivrPhoneNo : ",ivrPhoneNo);
+                                // sipCall('call-audio', ivrPhoneNo);
+                                sipCall('call-audio', ivrPhoneNo);
                             }
                         }
                         if(callInitStatus == "Ringing" && e.type == "connected"){
@@ -2186,15 +2393,7 @@
                             startCallTimer()
                             document.querySelector("#hold-btn").disabled = false;
                             document.querySelector("#mute-btn").disabled = false;
-                            getUsers();
-
-                            setTimeout(() => {
-                                const call_uuid = getCallIdOfCallNumber('live').then(resp => {
-                                    console.log("in Call uuid : ", resp);
-                                }).catch(err => {
-                                    console.log("in call uuid catch err : ",err);
-                                });
-                            }, 3000);
+                            getAgentsInterval();
                         }
                         args = {
                             callback: function(result) {
@@ -2240,14 +2439,15 @@
                         if(callInitStatus == "Nothing" && e.type == "terminated"){
                             document.getElementById("alert-msg").innerText = "Not Connected";
                             document.getElementById("alert-msg").style.color = "red";
-                            authUser("0", "0");
+                            // authUser("0", "0");
                         }
-                        
+                        /*
                         if((callInitStatus == "Call" || callInitStatus == "Ringing") && e.type == "terminated"){
                             setTimeout(()=>{
                                 authUser("1", "0");
                             }, 1000);
                         }
+                        */
 
                         if (e.session == oSipSessionRegister) {
                             // uiOnConnectionEvent(false, false);
@@ -2320,7 +2520,7 @@
                                 callType = "Outgoing";
                                 //stopRingbackTone();
                                 callInitStatus = "Ringing";
-                                authUser("1", "1");
+                                // authUser("1", "1");
                             }
                         }
                         break;
@@ -2511,26 +2711,28 @@
             document.querySelector(".title").innerHTML = "Calling";
             let phoneNumber = document.querySelector("#dialed-number").value;
             document.querySelector("#caller-number").value = phoneNumber;
+            
+            const ivrPhoneNo = formatNoForIVR(phoneNumber);
 
             if(fromPlatform == 'qkonnect'){
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
                 
                 const raw = JSON.stringify({
-                  "api_key": userAPIKey,
-                  "caller_number": phoneNumber
+                    "api_key": userAPIKey,
+                    "caller_number": ivrPhoneNo
                 });
                 
                 const requestOptions = {
-                  method: "POST",
-                  headers: myHeaders,
-                  body: raw,
-                  redirect: "follow"
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow"
                 };
                 
                 fetch("https://qkonnect.io/api/getContactName.php", requestOptions)
-                  .then((response) => response.json())
-                  .then((result) => {
+                    .then((response) => response.json())
+                    .then((result) => {
                         console.log(result, "get Call no")
                         if(result.status == "200" && result?.data?.caller_name){
                             document.getElementById("contact-name").innerText = result?.data?.caller_name;
@@ -2538,10 +2740,10 @@
                             document.getElementById("contact-name").innerText = 'Unknown';
                         }
                     })
-                  .catch((error) => console.error(error));
+                    .catch((error) => console.error(error));
             }else{
                 args = {
-                    apexClass: 'GetRecordId',
+                    apexClass: 'QKonnectCTI.GetRecordId',
                     methodName: 'getAccountId',
                     methodParams: 'phoneNumber='+phoneNumber,
                     callback: function(result) {
@@ -2569,8 +2771,9 @@
                 sforce.opencti.runApex(args)  
             }
 
-            // console.log('call init')
-            sipCall('call-audio', phoneNumber)
+            console.log('ivrPhoneNo : ', ivrPhoneNo)
+            // sipCall('call-audio', ivrPhoneNo)
+            sipCall('call-audio', ivrPhoneNo)
         })
 
         function getSelectedAgents() {
@@ -2592,7 +2795,7 @@
             return selectedAgents;
         }
 
-        async function callTransfer(transferType){
+        async function handleCallTransfer(transferType){
             try{
                 let connectionType = "";
                 console.log('type : ',transferType)
@@ -2651,9 +2854,6 @@
                 .then((response) => response.json())
                 .then((result) => {
                     console.log(result, "Call Transfer Response")
-                    if(result.status_code == 200){
-                        authUser("1", "0");
-                    }
                 })
                 .catch((error) => console.error(error));
             }catch(error){

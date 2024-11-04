@@ -331,7 +331,7 @@
             expert_video_size: '',
             expert_enable_media_caching: 'false',
             // expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"},{"urls":"turn:relay.backups.cz:3478","username":"webrtc","credential":"webrtc"}]',
-            expert_ice_servers: '[{"url":"stun:stun.l.google.com:19302"}]',
+            expert_ice_servers: '',
             expert_disable_callbtn_options: 'false',
             identity_realm: 'free',
             expert_bandwidth: '',
@@ -345,7 +345,7 @@
         var callType = '';
         var timerInterval;
         var elapsedTime = 0; // in seconds
-        var stunServer = '[{"url":"stun:stun.l.google.com:19302"}]';
+        var stunServer = '';
 
         var urlParams = new URLSearchParams(window.location.search);
         console.log("urlParams : ",urlParams);
@@ -474,7 +474,7 @@
                         <option value="Other">Other</option>`;
                     }
                     // twillio stun - [{url:"stun:global.stun.twilio.com:3478"}]
-                    // google stun - [{url:"stun:stun.l.google.com:19302"}]
+                    // google stun - [{url:"stun:stunn.l.google.com:19302"}]
                     // turn server - { url:'turn:zuqo@voiceuat.novofrontier.ai:3478', credential:'zuqo'}
                     // stunServer = result.ivr_details.account_id == "619679" ? [{ url:'turn:zuqo@voiceuat.novofrontier.ai:3478', credential:'zuqo'}] : [{url:"stun:stun.l.google.com:19302"}];
                     // credentialObj.expert_ice_servers = result.ivr_details.account_id == "619679" ? '[{ "url":"turn:zuqo@voiceuat.novofrontier.ai:3478", "credential":"zuqo"}]' : '[{"url":"stun:stun.l.google.com:19302"}]';;
