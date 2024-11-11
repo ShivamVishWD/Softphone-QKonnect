@@ -687,7 +687,7 @@
                     const params = {Status__c: onlineStatus == "1" ? "Online" : "Offline", Active_Status__c: agentStatus, Log_Description__c: ""};
 
                     args = {
-                        apexClass: 'AgentsActivity',
+                        apexClass: 'QKonnectCTI.AgentsActivity',
                         methodName: 'logAgentStatus',
                         methodParams: `body=${JSON.stringify(params)}`,
                         callback: function(result) {
@@ -883,7 +883,7 @@
                 const params = { callId: callLog_CallID, disposition: document.querySelector("#call-was").value, notes: document.querySelector("#call-desc").value, id: idOfObject };
                 console.log(params, 'params disposition');
                 args = {
-                    apexClass: 'CreateCallLog',
+                    apexClass: 'QKonnectCTI.CreateCallLog',
                     methodName: 'insertUpdateCallLog',
                     methodParams: `body=${JSON.stringify(params)}`,
                     callback: function(result) {
@@ -1118,7 +1118,7 @@
         sforce.opencti.enableClickToDial(args)
         */
         args = {
-            apexClass: 'GetUserInfo',
+            apexClass: 'QKonnectCTI.GetUserInfo',
             methodName: 'getExtension',
             methodParams: '',
             callback: function(result) {
@@ -1301,7 +1301,7 @@
                 
                 
                 args = {
-                    apexClass: 'GetRecordId',
+                    apexClass: 'QKonnectCTI.GetRecordId',
                     methodName: 'getAccountId',
                     methodParams: 'phoneNumber='+result.number,
                     callback: function(result) {
@@ -2197,7 +2197,7 @@
                                   .catch((error) => console.error(error));
                             }else{
                                 args = {
-                                    apexClass: 'GetRecordId',
+                                    apexClass: 'QKonnectCTI.GetRecordId',
                                     methodName: 'getAccountId',
                                     methodParams: 'phoneNumber='+String(sRemoteNumber).slice(-10),
                                     callback: function(result) {
@@ -2669,7 +2669,7 @@
                     .catch((error) => console.error(error));
             }else{
                 args = {
-                    apexClass: 'GetRecordId',
+                    apexClass: 'QKonnectCTI.GetRecordId',
                     methodName: 'getAccountId',
                     methodParams: 'phoneNumber='+phoneNumber,
                     callback: function(result) {
