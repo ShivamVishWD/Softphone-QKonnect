@@ -1282,10 +1282,10 @@
                     hangupBtn.classList.remove("hide")
                     hangupBtn.classList.add("show")
                     DialPad.call();
-                    // const ivrPhoneNo = formatNoForIVR(result.number)
+                    const ivrPhoneNo = formatNoForIVR(result.number)
                     // console.log("ivrPhoneNo : ",ivrPhoneNo);
                     // sipCall("call-audio", ivrPhoneNo)
-                    sipCall("call-audio", result.number)
+                    sipCall("call-audio", ivrPhoneNo)
                 }
                 args = {
                     visible: true,
